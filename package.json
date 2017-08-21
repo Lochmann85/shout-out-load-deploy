@@ -1,0 +1,25 @@
+{
+   "name": "shout-out-loud-server",
+   "version": "0.0.1",
+   "description": "server for the shout out load webpage",
+   "main": "start.js",
+   "scripts": {
+      "start": "node start.js"
+   },
+   "engine": {
+      "node": "*",
+      "npm": "*"
+   },
+   "dependencies": {
+      "body-parser": "^1.17.2",
+      "express": "4.15.3",
+      "graphql": "^0.10.3",
+      "graphql-server-express": "^1.0.0"
+   },
+   "author": "Georg Lochmann <georg.lochmann@gmail.com>",
+   "license": "CC-BY-1.0",
+   "repository": {
+      "type": "git",
+      "url": "http://github.com/Lochmann85/shout-out-load-deploy.git"
+   }
+}
