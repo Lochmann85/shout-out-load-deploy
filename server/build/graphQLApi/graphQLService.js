@@ -27,6 +27,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var reactAppDirectory = _path2.default.join(__dirname, "..", "..", "..", "client", "build");
 
+var OPENSHIFT_PORT = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
+    OPENSHIFT_IP = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+
 var graphQLServer = null;
 
 /**
@@ -45,10 +48,11 @@ var initializeGraphQLService = function initializeGraphQLService() {
 
       // Express only serves static assets in production
       if (process.env.NODE_ENV === 'production') {
-         GRAPHQL_PORT = 3000;
-
+         GRAPHQL_PORT = OPENSHIFT_PORT;
+         console.log("production");
          graphQLServer.use(_express2.default.static(reactAppDirectory));
       } else {
+         console.log("develop");
          GRAPHQL_PORT = 3001;
       }
 
@@ -63,8 +67,8 @@ var initializeGraphQLService = function initializeGraphQLService() {
          endpointURL: '/graphql'
       }));
 
-      graphQLServer.listen(GRAPHQL_PORT, function () {
-         console.log('GraphQL Server is now running on http://localhost:' + GRAPHQL_PORT + '/graphql'); // eslint-disable-line no-console
+      graphQLServer.listen(GRAPHQL_PORT, OPENSHIFT_IP, function () {
+         console.log('GraphQL Server is now running on http://' + OPENSHIFT_IP + ':' + GRAPHQL_PORT + '/graphql'); // eslint-disable-line no-console
          resolve();
       });
    });
