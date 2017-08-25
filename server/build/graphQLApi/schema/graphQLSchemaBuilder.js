@@ -101,11 +101,15 @@ var _buildExecutableSchema = function _buildExecutableSchema() {
  * @description builds the graphql schema
  */
 var buildSchema = function buildSchema() {
-   _requireAllGraphQLServices();
+   return new Promise(function (resolve, reject) {
+      _requireAllGraphQLServices();
 
-   _replaceNeedlesInSchema();
+      _replaceNeedlesInSchema();
 
-   _buildExecutableSchema();
+      _buildExecutableSchema();
+
+      resolve();
+   });
 };
 
 exports.graphQLServices = graphQLServices;

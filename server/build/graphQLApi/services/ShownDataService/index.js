@@ -7,14 +7,25 @@ exports.addResolversTo = exports.queries = exports.types = undefined;
 
 var _graphqlTools = require("graphql-tools");
 
-var types = "\n      type ShownData {\n         value: Float!\n      }\n   ";
+var shouts = [{
+   message: "In",
+   type: "Custom"
+}, {
+   message: "Your",
+   type: "Custom"
+}, {
+   message: "Face",
+   type: "Custom"
+}];
 
-var queries = "\n      getShownData: String\n ";
+var types = "\n      type Shout {\n         message: String!\n         type: String!\n      }\n   ";
+
+var queries = "\n      getShoutsQueue: [Shout!]!\n ";
 
 var _queriesResolver = {
    Query: {
-      getShownData: function getShownData() {
-         return "test";
+      getShoutsQueue: function getShoutsQueue() {
+         return shouts;
       }
    }
 };
