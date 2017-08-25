@@ -12,10 +12,12 @@
    },
    "dependencies": {
       "body-parser": "^1.17.2",
-      "express": "4.15.3",
-      "graphql": "^0.10.3",
+      "express": "^4.15.4",
+      "graphql": "^0.10.5",
       "graphql-server-express": "^1.0.0",
-      "graphql-tools": "^1.1.0"
+      "graphql-subscriptions": "^0.4.4",
+      "graphql-tools": "^1.1.2",
+      "subscriptions-transport-ws": "0.8.1"
    },
    "author": "Georg Lochmann <georg.lochmann@gmail.com>",
    "license": "CC-BY-1.0",
