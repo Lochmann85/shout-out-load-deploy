@@ -11,6 +11,8 @@ var _http = require('http');
 
 var _subscriptionsTransportWs = require('subscriptions-transport-ws');
 
+var _graphQLService = require('./graphQLService');
+
 var _executableSchema = require('./schema/executableSchema');
 
 var _executableSchema2 = _interopRequireDefault(_executableSchema);
@@ -19,28 +21,30 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var subscriptionServer = null;
 
-var initializeSubscriptionService = function initializeSubscriptionService() {
+/**
+ * @public
+ * @function initializeSubscriptionService
+ * @description Initializes the Subscription server
+ * @param {object} serverConfig - configuration of server
+ * @returns {Promise} of initialization
+ */
+var initializeSubscriptionService = function initializeSubscriptionService(serverConfig) {
    return new Promise(function (resolve, reject) {
 
-      var WS_IP = process.env.OPENSHIFT_WS_IP || "0.0.0.0",
-          WS_PORT = process.OPENSHIFT_WS_PORT || 8000;
-
-      var websocketServer = (0, _http.createServer)(function (request, response) {
-         response.writeHead(404);
-         response.end();
-      });
+      var graphQlServer = (0, _http.createServer)(_graphQLService.appServer);
 
       exports.subscriptionServer = subscriptionServer = _subscriptionsTransportWs.SubscriptionServer.create({
          schema: _executableSchema2.default.schema,
          execute: _graphql.execute,
          subscribe: _graphql.subscribe
       }, {
-         server: websocketServer,
-         path: '/graphql'
+         server: graphQlServer,
+         path: "/graphql"
       });
 
-      websocketServer.listen(WS_PORT, WS_IP, function () {
-         console.log('Websocket Server is now running on ws://' + WS_IP + ':' + WS_PORT + '/graphql'); // eslint-disable-line no-console
+      graphQlServer.listen(serverConfig.OPENSHIFT_PORT, serverConfig.OPENSHIFT_IP, function () {
+         console.log('WebSocket Server is now running on http://' + serverConfig.OPENSHIFT_IP + ':' + serverConfig.OPENSHIFT_PORT + '/graphql'); // eslint-disable-line no-console
+
          resolve();
       });
    });

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
    value: true
 });
-exports.initializeGraphQLService = exports.graphQLServer = undefined;
+exports.initializeGraphQLService = exports.appServer = undefined;
 
 var _express = require('express');
 
@@ -27,50 +27,42 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var reactAppDirectory = _path2.default.join(__dirname, "..", "..", "..", "client", "build");
 
-var OPENSHIFT_PORT = process.env.OPENSHIFT_NODEJS_PORT || 8080,
-    OPENSHIFT_IP = process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0";
-
-var graphQLServer = null;
+var appServer = null;
 
 /**
  * @public
  * @function initializeGraphQLService
  * @description Initializes the GraphQL server on the given port port
- * with 2 urls "/graphql" and "/graphiql"
+ * with 2 urls "/dev_graphql" and "/graphiql"
+ * @param {object} serverConfig - configuration of server
  * @returns {Promise} of initialization
  */
-var initializeGraphQLService = function initializeGraphQLService() {
+var initializeGraphQLService = function initializeGraphQLService(serverConfig) {
    return new Promise(function (resolve, reject) {
 
-      exports.graphQLServer = graphQLServer = (0, _express2.default)();
-
-      var GRAPHQL_PORT = void 0;
+      exports.appServer = appServer = (0, _express2.default)();
 
       // Express only serves static assets in production
       if (process.env.NODE_ENV === "production") {
-         GRAPHQL_PORT = OPENSHIFT_PORT;
-         graphQLServer.use(_express2.default.static(reactAppDirectory));
+         appServer.use(_express2.default.static(reactAppDirectory));
       } else {
-         GRAPHQL_PORT = 3001;
-
-         graphQLServer.use("/graphiql", (0, _graphqlServerExpress.graphiqlExpress)({
-            endpointURL: "/graphql"
+         appServer.use("/graphiql", (0, _graphqlServerExpress.graphiqlExpress)({
+            endpointURL: "/dev_graphql"
          }));
 
-         graphQLServer.use("/graphql", _bodyParser2.default.json(), (0, _graphqlServerExpress.graphqlExpress)(function (request) {
+         appServer.use("/dev_graphql", _bodyParser2.default.json(), (0, _graphqlServerExpress.graphqlExpress)(function (request) {
             return {
                schema: _executableSchema2.default.schema,
                context: {}
             };
          }));
+
+         console.log('GraphiQL is now running on http://' + serverConfig.OPENSHIFT_IP + ':' + serverConfig.OPENSHIFT_PORT + '/graphiql'); // eslint-disable-line no-console
       }
 
-      graphQLServer.listen(GRAPHQL_PORT, OPENSHIFT_IP, function () {
-         console.log('GraphQL Server is now running on http://' + OPENSHIFT_IP + ':' + GRAPHQL_PORT + '/graphql'); // eslint-disable-line no-console
-         resolve();
-      });
+      resolve();
    });
 };
 
-exports.graphQLServer = graphQLServer;
+exports.appServer = appServer;
 exports.initializeGraphQLService = initializeGraphQLService;
