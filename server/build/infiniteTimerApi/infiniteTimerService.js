@@ -11,9 +11,7 @@ var _subscriptionHandler2 = _interopRequireDefault(_subscriptionHandler);
 
 var _storageApi = require('./../storageApi');
 
-var _Configurations = require('./../Configurations.json');
-
-var _Configurations2 = _interopRequireDefault(_Configurations);
+var _configurations = require('./../configurations');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30,7 +28,7 @@ var _timeStep = function _timeStep() {
          _subscriptionHandler2.default.publish("shoutsQueueChangedChannel", _storageApi.shownShoutsQueue);
 
          resolve();
-      }, _Configurations2.default.TIMER_INTERVAL);
+      }, _configurations.TIMER_INTERVAL);
    });
 };
 
