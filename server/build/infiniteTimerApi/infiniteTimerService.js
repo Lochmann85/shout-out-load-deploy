@@ -11,7 +11,7 @@ var _subscriptionHandler2 = _interopRequireDefault(_subscriptionHandler);
 
 var _storageApi = require('./../storageApi');
 
-var _Configurations = require('./../Configurations');
+var _Configurations = require('./../Configurations.json');
 
 var _Configurations2 = _interopRequireDefault(_Configurations);
 
