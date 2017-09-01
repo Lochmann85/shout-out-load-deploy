@@ -62,6 +62,19 @@ var BaseQueue = function () {
      */
 
   }, {
+    key: "hasAnItem",
+
+
+    /**
+     * @public
+     * @function hasAnItem
+     * @description checks if the queue has a new item
+     * @returns {bool} true when size is larger then 1
+     */
+    value: function hasAnItem() {
+      return this.size > 0;
+    }
+  }, {
     key: "size",
     get: function get() {
       return this._array.length;

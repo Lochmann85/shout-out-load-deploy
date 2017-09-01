@@ -9,6 +9,8 @@ var _graphqlTools = require('graphql-tools');
 
 var _storageApi = require('./../../../storageApi');
 
+var _shoutApi = require('./../../../shoutApi');
+
 var _subscriptionHandler = require('./../../../graphQLApi/subscription/subscriptionHandler');
 
 var _subscriptionHandler2 = _interopRequireDefault(_subscriptionHandler);
@@ -17,12 +19,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var types = '\ntype Shout {\n   message: String!\n   type: String!\n}\ninput ShoutInput {\n   message: String\n}\n';
 
-var queries = '\ngetShoutsQueue: [Shout]!\n';
+var queries = '\ngetShoutsQueue: [Shout]!\ngetCurrentShout: Shout\n';
 
 var _queriesResolver = {
    Query: {
       getShoutsQueue: function getShoutsQueue() {
          return _storageApi.shownShoutsQueue.asArray();
+      },
+      getCurrentShout: function getCurrentShout() {
+         return _storageApi.currentShownShout;
       }
    }
 };
@@ -36,8 +41,7 @@ var _mutationsResolver = {
 
          return new Promise(function (resolve, reject) {
             if (shout && shout.message) {
-               shout.type = "Custom";
-               _storageApi.pendingShoutsQueue.enqueue(shout);
+               _storageApi.pendingShoutsQueue.enqueue(new _shoutApi.CustomShout(shout));
                resolve(true);
             } else {
                reject('Please enter a message');
@@ -47,7 +51,7 @@ var _mutationsResolver = {
    }
 };
 
-var subscriptions = '\nshoutsQueueChanged: [Shout]!\n';
+var subscriptions = '\nshoutsQueueChanged: [Shout]!\ncurrentShoutChanged: Shout\n';
 
 var _subscriptionResolver = {
    Subscription: {
@@ -57,6 +61,14 @@ var _subscriptionResolver = {
          },
          subscribe: function subscribe() {
             return _subscriptionHandler2.default.asyncIterator("shoutsQueueChangedChannel");
+         }
+      },
+      currentShoutChanged: {
+         resolve: function resolve(payload) {
+            return payload;
+         },
+         subscribe: function subscribe() {
+            return _subscriptionHandler2.default.asyncIterator("currentShoutChangedChannel");
          }
       }
    }

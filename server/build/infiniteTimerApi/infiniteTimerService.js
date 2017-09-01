@@ -5,15 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.startTimer = undefined;
 
-var _subscriptionHandler = require('./../graphQLApi/subscription/subscriptionHandler');
-
-var _subscriptionHandler2 = _interopRequireDefault(_subscriptionHandler);
-
 var _storageApi = require('./../storageApi');
 
 var _configurations = require('./../configurations');
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+if (typeof _storageApi.storeUpdater.update !== "function") {
+   throw new Error("FATAL ERROR: storeUpdater needs an 'update' Promise function");
+}
 
 /**
  * @private
@@ -23,11 +21,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _timeStep = function _timeStep() {
    return new Promise(function (resolve, reject) {
       setTimeout(function () {
-         _storageApi.shownShoutsQueue.cycle();
-
-         _subscriptionHandler2.default.publish("shoutsQueueChangedChannel", _storageApi.shownShoutsQueue);
-
-         resolve();
+         _storageApi.storeUpdater.update().then(resolve).catch(reject);
       }, _configurations.TIMER_INTERVAL);
    });
 };

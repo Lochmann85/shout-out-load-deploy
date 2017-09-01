@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+   value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -17,61 +17,49 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 var ShownShoutsQueue = function () {
 
-  /**
-   * @public
-   * @function constructor
-   * @description initializes the array
-   * @param {object} pendingShoutsQueue - the queue for the pending shouts
-   */
-  function ShownShoutsQueue(pendingShoutsQueue) {
-    _classCallCheck(this, ShownShoutsQueue);
+   /**
+    * @public
+    * @function constructor
+    * @description initializes the array
+    */
+   function ShownShoutsQueue() {
+      _classCallCheck(this, ShownShoutsQueue);
 
-    this._pendingShoutsQueue = pendingShoutsQueue;
-    this._array = new Array(_configurations.MAX_SHOWN_SHOUTS);
-  }
+      this._array = [];
+      for (var index = 0; index < _configurations.MAX_SHOWN_SHOUTS; ++index) {
+         this._array.push(null);
+      }
+   }
 
-  /**
-   * @public
-   * @function cycle
-   * @description cycles the fixed size shown shouts queue
-   */
+   /**
+    * @public
+    * @function cycle
+    * @description cycles the fixed size shown shouts queue
+    * @param {object} shout - new shout to push front
+    */
 
 
-  _createClass(ShownShoutsQueue, [{
-    key: 'cycle',
-    value: function cycle() {
-      var shout = this._pendingShoutsQueue.dequeue();
-      this._baseCycle(shout);
-    }
+   _createClass(ShownShoutsQueue, [{
+      key: 'cycle',
+      value: function cycle(shout) {
+         this._array.unshift(shout);
+         this._array.pop();
+      }
 
-    /**
-     * @private
-     * @function _baseCycle
-     * @description the basic cycle functionality
-     * @param {object} shout - new entered shout
-     */
+      /**
+       * @public
+       * @function asArray
+       * @description returns the shown shouts as array
+       */
 
-  }, {
-    key: '_baseCycle',
-    value: function _baseCycle(shout) {
-      this._array.push(shout);
-      this._array.shift();
-    }
+   }, {
+      key: 'asArray',
+      value: function asArray() {
+         return this._array;
+      }
+   }]);
 
-    /**
-     * @public
-     * @function asArray
-     * @description returns the shown shouts as array
-     */
-
-  }, {
-    key: 'asArray',
-    value: function asArray() {
-      return this._array;
-    }
-  }]);
-
-  return ShownShoutsQueue;
+   return ShownShoutsQueue;
 }();
 
 ;
