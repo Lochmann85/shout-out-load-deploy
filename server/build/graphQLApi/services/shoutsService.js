@@ -7,11 +7,11 @@ exports.addResolversTo = exports.subscriptions = exports.mutations = exports.que
 
 var _graphqlTools = require('graphql-tools');
 
-var _storageApi = require('./../../../storageApi');
+var _storageApi = require('./../../storageApi');
 
-var _shoutApi = require('./../../../shoutApi');
+var _shoutApi = require('./../../shoutApi');
 
-var _subscriptionHandler = require('./../../../graphQLApi/subscription/subscriptionHandler');
+var _subscriptionHandler = require('./../../graphQLApi/subscription/subscriptionHandler');
 
 var _subscriptionHandler2 = _interopRequireDefault(_subscriptionHandler);
 

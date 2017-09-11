@@ -9,6 +9,10 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
 var _graphqlTools = require('graphql-tools');
 
 var _schema = require('./schema');
@@ -36,14 +40,13 @@ var graphQLServices = {};
  * @description loops through directory and requires all folders
  */
 var _requireAllGraphQLServices = function _requireAllGraphQLServices() {
-   var searchPatch = __dirname + '/../services';
+   var searchPatch = _path2.default.join(__dirname, "..", "services");
 
-   var directories = _fs2.default.readdirSync(searchPatch).filter(function (file) {
-      return _fs2.default.statSync(searchPatch + '/' + file).isDirectory();
-   });
+   var files = _fs2.default.readdirSync(searchPatch);
 
-   directories.forEach(function (graphQLService) {
-      graphQLServices[graphQLService] = require(searchPatch + '/' + graphQLService);
+   files.forEach(function (graphQLServiceFile) {
+      var graphQLService = graphQLServiceFile.split(".")[0];
+      graphQLServices[graphQLService] = require(_path2.default.join(searchPatch, graphQLServiceFile));
    });
 };
 
@@ -101,15 +104,11 @@ var _buildExecutableSchema = function _buildExecutableSchema() {
  * @description builds the graphql schema
  */
 var buildSchema = function buildSchema() {
-   return new Promise(function (resolve, reject) {
-      _requireAllGraphQLServices();
+   _requireAllGraphQLServices();
 
-      _replaceNeedlesInSchema();
+   _replaceNeedlesInSchema();
 
-      _buildExecutableSchema();
-
-      resolve();
-   });
+   _buildExecutableSchema();
 };
 
 exports.graphQLServices = graphQLServices;
