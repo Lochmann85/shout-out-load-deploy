@@ -12,8 +12,6 @@ var _subscriptionService = require('./graphQLApi/subscriptionService');
 
 var _infiniteTimerService = require('./infiniteTimerApi/infiniteTimerService');
 
-console.log(_configurations.serverConfig);
-
 (0, _mongoDbService.initializeMongoDb)(_configurations.serverConfig).then(_graphQLSchemaBuilder.buildSchema).then(function () {
    return (0, _graphQLService.initializeGraphQLService)(_configurations.serverConfig);
 }).then(function () {
