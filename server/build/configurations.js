@@ -16,8 +16,6 @@ var serverConfig = {
    MONGO_USER_PWD: process.env.MONGODB_PASSWORD || "storage"
 };
 
-console.log(serverConfig);
-
 exports.serverConfig = serverConfig;
 exports.TIMER_INTERVAL = TIMER_INTERVAL;
 exports.MAX_SHOWN_SHOUTS = MAX_SHOWN_SHOUTS;
