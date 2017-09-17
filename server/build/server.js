@@ -12,7 +12,11 @@ var _subscriptionService = require('./graphQLApi/subscriptionService');
 
 var _infiniteTimerService = require('./infiniteTimerApi/infiniteTimerService');
 
-// initializeMongoDb(serverConfig)
+try {
+   (0, _mongoDbService.initializeMongoDb)(_configurations.serverConfig);
+} catch (error) {
+   console.log(error);
+}
 //    .then(
 (0, _graphQLSchemaBuilder.buildSchema)();
 // .then(() => {
