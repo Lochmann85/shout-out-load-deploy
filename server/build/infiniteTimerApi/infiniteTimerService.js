@@ -5,13 +5,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.startTimer = undefined;
 
-var _storageApi = require('./../storageApi');
+var _storageService = require('./../storageApi/storageService');
 
 var _configurations = require('./../configurations');
-
-if (typeof _storageApi.storeUpdater.update !== "function") {
-   throw new Error("FATAL ERROR: storeUpdater needs an 'update' Promise function");
-}
 
 /**
  * @private
@@ -21,7 +17,7 @@ if (typeof _storageApi.storeUpdater.update !== "function") {
 var _timeStep = function _timeStep() {
    return new Promise(function (resolve, reject) {
       setTimeout(function () {
-         _storageApi.storeUpdater.update().then(resolve).catch(reject);
+         _storageService.storeUpdater.update().then(resolve).catch(reject);
       }, _configurations.TIMER_INTERVAL);
    });
 };

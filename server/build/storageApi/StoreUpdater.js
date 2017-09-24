@@ -6,23 +6,40 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _Queue = require('./Queue');
+
+var _Queue2 = _interopRequireDefault(_Queue);
+
 var _subscriptionHandler = require('./../graphQLApi/subscription/subscriptionHandler');
 
 var _subscriptionHandler2 = _interopRequireDefault(_subscriptionHandler);
 
-var _shoutApi = require('./../shoutApi');
+var _models = require('./../mongoDbApi/models');
+
+var _shoutDbService = require('./../mongoDbApi/services/shout/shoutDbService');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var StoreUpdater = function () {
-   function StoreUpdater(pendingShoutsQueue, shownShoutsQueue, currentShownShout) {
+   function StoreUpdater(pendingShoutsQueue) {
+      var _this = this;
+
       _classCallCheck(this, StoreUpdater);
 
-      this._pendingShoutsQueue = pendingShoutsQueue;
-      this._shownShoutsQueue = shownShoutsQueue;
-      this._currentShownShout = currentShownShout;
+      this.enqueue = function (shoutData) {
+         return (0, _shoutDbService.createShout)(shoutData).then(function (createdShout) {
+            return _this._pendingShoutsQueue.enqueue(createdShout);
+         });
+      };
+
+      this.getCurrentShownShout = function () {
+         return _this._currentShownShout;
+      };
+
+      this._pendingShoutsQueue = new _Queue2.default();
+      this._currentShownShout = _models.shoutModel.getEmptyShout();
    }
 
    /**
@@ -36,28 +53,43 @@ var StoreUpdater = function () {
    _createClass(StoreUpdater, [{
       key: 'update',
       value: function update() {
-         var _this = this;
+         var _this2 = this;
 
          return new Promise(function (resolve, reject) {
-            if (_this._pendingShoutsQueue.hasAnItem()) {
-               if (_this._currentShownShout.shouldBeShown()) {
-                  _this._shownShoutsQueue.cycle(_this._currentShownShout);
-                  _subscriptionHandler2.default.publish("shoutsQueueChangedChannel", _this._shownShoutsQueue);
+            if (_this2._pendingShoutsQueue.hasAnItem()) {
+               if (_this2._currentShownShout.shouldBeShown) {
+                  _subscriptionHandler2.default.publish("shoutsQueueChangedChannel", (0, _shoutDbService.cycle)(_this2._currentShownShout));
                }
-               _this._currentShownShout = _this._pendingShoutsQueue.dequeue();
-               _subscriptionHandler2.default.publish("currentShoutChangedChannel", _this._currentShownShout);
+               _this2._currentShownShout = _this2._pendingShoutsQueue.dequeue();
+               _subscriptionHandler2.default.publish("currentShoutChangedChannel", _this2._currentShownShout);
             } else {
-               if (_this._currentShownShout.shouldBeShown()) {
-                  _this._shownShoutsQueue.cycle(_this._currentShownShout);
-                  _subscriptionHandler2.default.publish("shoutsQueueChangedChannel", _this._shownShoutsQueue);
+               if (_this2._currentShownShout.shouldBeShown) {
+                  _subscriptionHandler2.default.publish("shoutsQueueChangedChannel", (0, _shoutDbService.cycle)(_this2._currentShownShout));
 
-                  _this._currentShownShout = new _shoutApi.EmptyShout();
-                  _subscriptionHandler2.default.publish("currentShoutChangedChannel", _this._currentShownShout);
+                  _this2._currentShownShout = _models.shoutModel.getEmptyShout();
+                  _subscriptionHandler2.default.publish("currentShoutChangedChannel", _this2._currentShownShout);
                }
             }
             resolve();
          });
       }
+
+      /**
+       * @public
+       * @function enqueue
+       * @description enqueues the next shout
+       * @param {object} shoutData - shout to enqueue
+       * @returns {Promise} pending shout queue
+       */
+
+
+      /**
+       * @public
+       * @function getCurrentShownShout
+       * @description getter for the current shown shout skeleton
+       * @returns {object} current shown shout
+       */
+
    }]);
 
    return StoreUpdater;

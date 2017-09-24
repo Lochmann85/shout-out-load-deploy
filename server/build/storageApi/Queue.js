@@ -10,18 +10,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @public
- * @function BaseQueue
+ * @function Queue
  * @description base class for a queue
  */
-var BaseQueue = function () {
+var Queue = function () {
 
   /**
    * @public
    * @function constructor
    * @description initializes the basic array
    */
-  function BaseQueue() {
-    _classCallCheck(this, BaseQueue);
+  function Queue() {
+    _classCallCheck(this, Queue);
 
     this._array = [];
   }
@@ -35,7 +35,7 @@ var BaseQueue = function () {
    */
 
 
-  _createClass(BaseQueue, [{
+  _createClass(Queue, [{
     key: "enqueue",
     value: function enqueue(item) {
       this._array.push(item);
@@ -81,9 +81,9 @@ var BaseQueue = function () {
     }
   }]);
 
-  return BaseQueue;
+  return Queue;
 }();
 
 ;
 
-exports.default = BaseQueue;
+exports.default = Queue;

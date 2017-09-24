@@ -7,9 +7,9 @@ exports.addResolversTo = exports.subscriptions = exports.mutations = exports.que
 
 var _graphqlTools = require('graphql-tools');
 
-var _storageApi = require('./../../storageApi');
+var _storageService = require('./../../storageApi/storageService');
 
-var _shoutApi = require('./../../shoutApi');
+var _shoutDbService = require('./../../mongoDbApi/services/shout/shoutDbService');
 
 var _subscriptionHandler = require('./../../graphQLApi/subscription/subscriptionHandler');
 
@@ -24,29 +24,22 @@ var queries = '\ngetShoutsQueue: [Shout]!\ngetCurrentShout: Shout\n';
 var _queriesResolver = {
    Query: {
       getShoutsQueue: function getShoutsQueue() {
-         return _storageApi.shownShoutsQueue.asArray();
+         return (0, _shoutDbService.findAllShouts)();
       },
       getCurrentShout: function getCurrentShout() {
-         return _storageApi.currentShownShout;
+         return _storageService.storeUpdater.getCurrentShownShout();
       }
    }
 };
 
-var mutations = '\npushShout(shout: ShoutInput!): Boolean\n';
+var mutations = '\npushShout(shout: ShoutInput): Boolean\n';
 
 var _mutationsResolver = {
    Mutation: {
       pushShout: function pushShout(_, _ref) {
          var shout = _ref.shout;
 
-         return new Promise(function (resolve, reject) {
-            if (shout && shout.message) {
-               _storageApi.pendingShoutsQueue.enqueue(new _shoutApi.CustomShout(shout));
-               resolve(true);
-            } else {
-               reject('Please enter a message');
-            }
-         });
+         return _storageService.storeUpdater.enqueue(shout);
       }
    }
 };
@@ -57,7 +50,7 @@ var _subscriptionResolver = {
    Subscription: {
       shoutsQueueChanged: {
          resolve: function resolve(payload) {
-            return payload.asArray();
+            return payload;
          },
          subscribe: function subscribe() {
             return _subscriptionHandler2.default.asyncIterator("shoutsQueueChangedChannel");
