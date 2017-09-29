@@ -60,6 +60,13 @@ var initializeGraphQLService = function initializeGraphQLService(serverConfig) {
          console.log('GraphiQL is now running on http://' + serverConfig.OPENSHIFT_IP + ':' + serverConfig.OPENSHIFT_PORT + '/graphiql'); // eslint-disable-line no-console
       }
 
+      appServer.use("/graphql", _bodyParser2.default.json(), (0, _graphqlServerExpress.graphqlExpress)(function (request) {
+         return {
+            schema: _executableSchema2.default.schema,
+            context: {}
+         };
+      }));
+
       resolve();
    });
 };

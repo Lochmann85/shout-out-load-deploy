@@ -39,7 +39,7 @@ var initializeSubscriptionService = function initializeSubscriptionService(serve
          subscribe: _graphql.subscribe
       }, {
          server: graphQlServer,
-         path: "/graphql"
+         path: "/subscription"
       });
 
       graphQlServer.listen(serverConfig.OPENSHIFT_PORT, serverConfig.OPENSHIFT_IP, function () {
