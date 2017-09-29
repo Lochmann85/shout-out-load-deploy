@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 var TIMER_INTERVAL = 7000,
     MAX_SHOWN_SHOUTS = 100;
 
+console.log(process.env);
+
 var serverConfig = {
    OPENSHIFT_PORT: process.env.APP_SERVICE_PORT_WEB || 8080,
    OPENSHIFT_IP: process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0",
