@@ -11,7 +11,7 @@ var serverConfig = {
    OPENSHIFT_IP: process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0",
    MONGO_DB_URI: process.env.MONGODB_SERVICE_HOST || "127.0.0.1",
    MONGODB_SERVICE_PORT: process.env.MONGODB_SERVICE_PORT || "27017",
-   MONGO_DB_NAME: process.env.MONGODB_DATABASE || "sotDb",
+   MONGO_DB_NAME: process.env.MONGODB_DATABASE || "solDb",
    MONGO_USER_NAME: process.env.MONGODB_USER || "shout-out-loud",
    MONGO_USER_PWD: process.env.MONGODB_PASSWORD || "storage"
 };

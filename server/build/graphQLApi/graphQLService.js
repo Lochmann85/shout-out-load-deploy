@@ -67,7 +67,11 @@ var initializeGraphQLService = function initializeGraphQLService(serverConfig) {
          };
       }));
 
-      resolve();
+      appServer.listen(serverConfig.OPENSHIFT_PORT, serverConfig.OPENSHIFT_IP, function () {
+         console.log('Server is now running on http://' + serverConfig.OPENSHIFT_IP + ':' + serverConfig.OPENSHIFT_PORT + '/graphql'); // eslint-disable-line no-console
+
+         resolve();
+      });
    });
 };
 

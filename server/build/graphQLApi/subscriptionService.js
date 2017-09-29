@@ -42,11 +42,11 @@ var initializeSubscriptionService = function initializeSubscriptionService(serve
          path: "/subscription"
       });
 
-      graphQlServer.listen(serverConfig.OPENSHIFT_PORT, serverConfig.OPENSHIFT_IP, function () {
-         console.log('WebSocket Server is now running on http://' + serverConfig.OPENSHIFT_IP + ':' + serverConfig.OPENSHIFT_PORT + '/graphql'); // eslint-disable-line no-console
+      // graphQlServer.listen(serverConfig.OPENSHIFT_PORT, serverConfig.OPENSHIFT_IP, () => {
+      //    console.log(`WebSocket Server is now running on ws://${serverConfig.OPENSHIFT_IP}:${serverConfig.OPENSHIFT_PORT}/subscription`); // eslint-disable-line no-console
 
-         resolve();
-      });
+      //    resolve();
+      // });
    });
 };
 
