@@ -17,6 +17,6 @@ app.use(function (err, req, res, next) {
    res.status(500).send('Something bad happened!');
 });
 
-app.listen(_configurations.OPENSHIFT_PORT, _configurations.OPENSHIFT_IP);
+app.listen(_configurations.serverConfig.OPENSHIFT_PORT, _configurations.serverConfig.OPENSHIFT_IP);
 
 module.exports = app;
