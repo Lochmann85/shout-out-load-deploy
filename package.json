@@ -2,9 +2,9 @@
    "name": "shout-out-loud-server",
    "version": "0.0.1",
    "description": "server for the shout out load webpage",
-   "main": "server.js",
+   "main": "start.js",
    "scripts": {
-      "start": "node server.js",
+      "start": "node start.js",
       "test": "IP=0.0.0.0 PORT=3030 mocha --timeout 5000 tests/*_test.js"
    },
    "engine": {
