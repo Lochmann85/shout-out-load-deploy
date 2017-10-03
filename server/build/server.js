@@ -2,6 +2,8 @@
 
 var _configurations = require('./configurations');
 
+console.log(_configurations);
+
 var express = require('express'),
    app = express();
 
