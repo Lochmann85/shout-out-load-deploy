@@ -1,1 +1,1 @@
-web: OPENSHIFT_NODEJS_IP=127.0.0.1 node start.js
+web: node start.js
