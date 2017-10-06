@@ -42,8 +42,8 @@ var initializeSubscriptionService = function initializeSubscriptionService(serve
          path: "/graphql"
       });
 
-      graphQlServer.listen(serverConfig.OPENSHIFT_PORT, function () {
-         console.log('WebSocket Server is now running on ws://0.0.0.0:' + serverConfig.OPENSHIFT_PORT + '/graphql'); // eslint-disable-line no-console
+      graphQlServer.listen(serverConfig.PORT, function () {
+         console.log('WebSocket Server is now running on ws://0.0.0.0:' + serverConfig.PORT + '/graphql'); // eslint-disable-line no-console
 
          resolve();
       });
