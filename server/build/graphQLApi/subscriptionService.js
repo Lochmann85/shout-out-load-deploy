@@ -43,7 +43,7 @@ var initializeSubscriptionService = function initializeSubscriptionService(serve
       });
 
       graphQlServer.listen(serverConfig.OPENSHIFT_PORT, serverConfig.OPENSHIFT_IP, function () {
-         console.log('WebSocket Server is now running on http://' + serverConfig.OPENSHIFT_IP + ':' + serverConfig.OPENSHIFT_PORT + '/graphql'); // eslint-disable-line no-console
+         console.log('WebSocket Server is now running on ws://' + serverConfig.OPENSHIFT_IP + ':' + serverConfig.OPENSHIFT_PORT + '/graphql'); // eslint-disable-line no-console
 
          resolve();
       });
