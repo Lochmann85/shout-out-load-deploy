@@ -23,15 +23,13 @@ _mongoose2.default.Promise = global.Promise;
  * @returns {Promise} of initialization
  */
 var initializeMongoDb = function initializeMongoDb(config) {
-   var mongoDbUrl = 'mongodb://' + config.MONGO_USER_NAME + ':' + config.MONGO_USER_PWD + '@' + config.MONGO_DB_URI + ':27017/' + config.MONGO_DB_NAME;
-
    return new Promise(function (resolve, reject) {
-      _mongoose2.default.createConnection(mongoDbUrl, {
+      _mongoose2.default.createConnection(config.MONGODB_URI, {
          useMongoClient: true
       }).then(function (connection) {
          (0, _models.initializeDbModels)(connection);
       }).then(function () {
-         console.log('Connected to mongoDb on ' + config.MONGO_DB_URI + ':27017'); // eslint-disable-line no-console
+         console.log('Connected to mongoDb on ' + config.MONGODB_URI); // eslint-disable-line no-console
          resolve();
       }).catch(reject);
    });

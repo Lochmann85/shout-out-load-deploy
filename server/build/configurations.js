@@ -9,11 +9,7 @@ var TIMER_INTERVAL = process.env.TIMER_INTERVAL || 7000,
 
 var serverConfig = {
    PORT: process.env.PORT || 8000,
-   MONGO_DB_URI: process.env.MONGODB_SERVICE_HOST || "127.0.0.1",
-   MONGODB_SERVICE_PORT: process.env.MONGODB_SERVICE_PORT || "27017",
-   MONGO_DB_NAME: process.env.MONGODB_DATABASE || "solDb",
-   MONGO_USER_NAME: process.env.MONGODB_USER || "shout-out-loud",
-   MONGO_USER_PWD: process.env.MONGODB_PASSWORD || "storage"
+   MONGODB_URI: process.env.MONGODB_URI || "mongodb://shout-out-loud:storage@127.0.0.1:27017/solDb"
 };
 
 exports.serverConfig = serverConfig;
