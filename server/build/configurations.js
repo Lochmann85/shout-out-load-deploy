@@ -8,7 +8,7 @@ var TIMER_INTERVAL = 7000,
     JWT_SECRET = "WiFliServerSecret";
 
 var serverConfig = {
-   OPENSHIFT_PORT: process.env.APP_SERVICE_PORT_WEB || 8080,
+   OPENSHIFT_PORT: process.env.PORT || 5000,
    OPENSHIFT_IP: process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0",
    MONGO_DB_URI: process.env.MONGODB_SERVICE_HOST || "127.0.0.1",
    MONGODB_SERVICE_PORT: process.env.MONGODB_SERVICE_PORT || "27017",
