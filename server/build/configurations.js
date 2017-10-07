@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var TIMER_INTERVAL = process.env.TIMER_INTERVAL || 7000,
     MAX_SHOWN_SHOUTS = process.env.MAX_SHOWN_SHOUTS || 100,
-    JWT_SECRET = process.env.JWT_SECRET || "development";
+    GRAPHQL_JWT_SECRET = process.env.GRAPHQL_JWT_SECRET || "development";
 
 var serverConfig = {
    PORT: process.env.PORT || 8000,
@@ -15,4 +15,4 @@ var serverConfig = {
 exports.serverConfig = serverConfig;
 exports.TIMER_INTERVAL = TIMER_INTERVAL;
 exports.MAX_SHOWN_SHOUTS = MAX_SHOWN_SHOUTS;
-exports.JWT_SECRET = JWT_SECRET;
+exports.GRAPHQL_JWT_SECRET = GRAPHQL_JWT_SECRET;
