@@ -21,6 +21,8 @@ var _authenticationService = require('./../authenticationApi/authenticationServi
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 var authenticationMiddleware = new _authenticationService.SubscriptionAuthenticationMiddleware();
 
 var subscriptionServer = null;
@@ -40,9 +42,15 @@ var initializeSubscriptionService = function initializeSubscriptionService(serve
       exports.subscriptionServer = subscriptionServer = _subscriptionsTransportWs.SubscriptionServer.create({
          schema: _executableSchema2.default.schema,
          subscribe: _graphql.subscribe,
-         execute: _graphql.execute // (...args) => authenticationMiddleware.apply(args).then(args => {
-         //    return execute(...args);
-         // })
+         execute: function execute() {
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+               args[_key] = arguments[_key];
+            }
+
+            return authenticationMiddleware.apply(args).then(function (args) {
+               return _graphql.execute.apply(undefined, _toConsumableArray(args));
+            });
+         }
       }, {
          server: graphQlServer,
          path: "/graphql"
