@@ -12,11 +12,11 @@ var _roleDbService = require('./../../mongoDbApi/services/role/roleDbService');
 // import { and } from './../../helper/compositions';
 // import { roleAdministration, notOwnRole } from './../../authorizationApi/authorizationService';
 
-var types = '\ntype Role {\n   id: ID!\n   name: String!\n   createdAt: String!\n   isStatic: Boolean!\n   rules: [Rule!]\n}\ninput RoleData {\n   name: String\n   rules: [RuleData]\n}';
+var types = '\ntype Role {\n   id: ID!\n   name: String!\n   createdAt: String!\n   isStatic: Boolean!\n   rules: [Rule!]\n}\ninput RoleData {\n   name: String\n   rules: [ID!]\n}';
 
 var queries = '\n   getAllRoles: [Role!]\n   getRole(roleId: ID!): Role!\n';
 
-var mutations = '\n   createRole(roleData: RoleData!): Role!\n   updateRole(roleData: RoleData!, roleId: ID!): Role!\n   deleteRole(roleId: ID!): Role!\n';
+var mutations = '\n   createRole(roleData: RoleData): Role!\n   updateRole(roleData: RoleData, roleId: ID!): Role!\n   deleteRole(roleId: ID!): Role!\n';
 
 var _queriesResolver = {
    Query: {

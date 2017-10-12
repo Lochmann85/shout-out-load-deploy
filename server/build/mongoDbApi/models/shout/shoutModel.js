@@ -23,7 +23,7 @@ var shoutSchema = new _mongoose2.default.Schema({
       type: Boolean,
       required: true
    }
-});
+}, { timestamps: true });
 
 /**
  * @public

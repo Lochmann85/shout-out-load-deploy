@@ -16,6 +16,8 @@ var _mongooseUniqueValidator = require('mongoose-unique-validator');
 
 var _mongooseUniqueValidator2 = _interopRequireDefault(_mongooseUniqueValidator);
 
+var _validator = require('validator');
+
 var _errorsApi = require('./../../../errorsApi');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -28,19 +30,34 @@ var passwordValidate = {
    validator: function validator(newPassword) {
       return newPassword.length >= PASSWORD_LENGTH;
    },
-   message: "The new password is not of the required length (6+)"
+   message: "The new password is not of the required length (6+)."
+};
+
+var emailValidate = {
+   validator: function validator(newEMail) {
+      return (0, _validator.isEmail)(newEMail);
+   },
+   message: "Please provide a correct E-Mail."
 };
 
 var userSchema = new _mongoose2.default.Schema({
-   name: {
+   email: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      validate: emailValidate
+   },
+   name: {
+      type: String,
+      required: true
    },
    password: {
       type: String,
-      validate: passwordValidate,
-      required: true
+      required: true,
+      validate: passwordValidate
+   },
+   resetPasswordToken: {
+      type: String
    },
    role: {
       type: ObjectId,
@@ -49,7 +66,7 @@ var userSchema = new _mongoose2.default.Schema({
    }
 }, { timestamps: true });
 
-var duplicateErrorMessage = "There already exists a user with the given name.";
+var duplicateErrorMessage = "There already exists a user with the given E-Mail.";
 
 userSchema.plugin(_mongooseUniqueValidator2.default, { message: duplicateErrorMessage });
 
@@ -99,13 +116,17 @@ userSchema.pre("findOneAndUpdate", function (next) {
       if (passwordValidate.validator(update["$set"].password)) {
          _continueWithHashedPassword(next, update["$set"]);
       } else {
-         next({
-            errors: { new: { message: passwordValidate.message } }
-         });
+         next({ errors: { new: { message: passwordValidate.message } } });
+      }
+   } else if (update["$set"] && update["$set"].email && update["$set"].email !== "") {
+      this.options.runValidators = true;
+      if (emailValidate.validator(update["$set"].email)) {
+         return next();
+      } else {
+         next({ errors: { email: { message: emailValidate.message } } });
       }
    } else {
       this.options.runValidators = true;
-
       return next();
    }
 });

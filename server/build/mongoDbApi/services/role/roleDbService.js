@@ -34,7 +34,7 @@ var staticRoleError = new _errorsApi.CustomError("StaticRole", {
  * @returns {Promise} of roles
  */
 var findAllRoles = function findAllRoles() {
-   return _models.roleModel.find().exec().catch(function (error) {
+   return _models.roleModel.find().populate("rules").exec().catch(function (error) {
       return new _errorsApi.MongooseSingleError(error);
    });
 };
@@ -48,7 +48,7 @@ var findAllRoles = function findAllRoles() {
  */
 var _findRole = function _findRole(mongooseQuery) {
    return new Promise(function (resolve, reject) {
-      mongooseQuery.exec().then(function (knownRole) {
+      mongooseQuery.populate("rules").exec().then(function (knownRole) {
          if (knownRole) {
             resolve(knownRole);
          } else {
@@ -84,9 +84,12 @@ var findRoleById = function findRoleById(roleId) {
  * @returns {Promise} of new role
  */
 var createRole = function createRole(roleData) {
-   return _models.roleModel.buildRoleWithRules(roleData).then(function (newRole) {
-      return newRole.save().catch(_convertMongooseToReadableError2.default);
-   });
+   roleData.isStatic = false;
+   var role = new _models.roleModel(roleData); // eslint-disable-line new-cap
+
+   return role.save().then(function (newRole) {
+      return findRoleById(newRole.id);
+   }).catch(_convertMongooseToReadableError2.default);
 };
 
 /**
@@ -98,13 +101,14 @@ var createRole = function createRole(roleData) {
  */
 var updateRole = function updateRole(roleData, roleId) {
    var set = {
-      name: roleData.name
+      name: roleData.name,
+      rules: roleData.rules
    };
    return findRoleById(roleId).then(function (role) {
       if (role.isStatic) {
          return Promise.reject(staticRoleError);
       } else {
-         return _models.roleModel.findByIdAndUpdate(roleId, { $set: set }).exec().catch(_convertMongooseToReadableError2.default);
+         return _models.roleModel.findByIdAndUpdate(roleId, { $set: set }).populate("rules").exec().catch(_convertMongooseToReadableError2.default);
       }
    });
 };
@@ -117,7 +121,7 @@ var updateRole = function updateRole(roleData, roleId) {
  * @returns {Promise} of default role
  */
 var _updateRelatedUser = function _updateRelatedUser(role) {
-   var roleQuery = _models.roleModel.findOne({ name: "LicenceUser" });
+   var roleQuery = _models.roleModel.findOne({ name: "whisperer" });
 
    return _findRole(roleQuery).then(function (defaultRole) {
       var searchParams = { role: role.id },

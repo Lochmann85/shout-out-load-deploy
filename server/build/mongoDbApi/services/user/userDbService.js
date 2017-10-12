@@ -16,6 +16,16 @@ var _errorsApi = require('./../../../errorsApi');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
+ * @private
+ * @function _populated
+ * @description adds the needed user population
+ * @returns {Promise} of mongoose query
+ */
+var _populated = function _populated(query) {
+   return query.populate("role").populate({ path: "role", populate: { path: "rules" } }).exec();
+};
+
+/**
  * @public
  * @function findUser
  * @description searches a user from the given mongoose query
@@ -24,7 +34,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var findUser = function findUser(mongooseQuery) {
    return new Promise(function (resolve, reject) {
-      mongooseQuery.exec().then(function (knownUser) {
+      _populated(mongooseQuery).then(function (knownUser) {
          if (knownUser) {
             resolve(knownUser);
          } else {
@@ -47,7 +57,7 @@ var findUser = function findUser(mongooseQuery) {
  * @returns {Promise} of user
  */
 var findUserById = function findUserById(userId) {
-   var userQuery = _models.userModel.findById(userId).populate("role");
+   var userQuery = _models.userModel.findById(userId);
 
    return findUser(userQuery);
 };
@@ -59,7 +69,7 @@ var findUserById = function findUserById(userId) {
  * @returns {Promise} of users
  */
 var findAllUsers = function findAllUsers() {
-   return _models.userModel.find().populate("role").exec().catch(function (error) {
+   return _populated(_models.userModel.find()).catch(function (error) {
       return new _errorsApi.MongooseSingleError(error);
    });
 };
@@ -75,15 +85,7 @@ var createUser = function createUser(userData) {
    var user = new _models.userModel(userData); // eslint-disable-line new-cap
 
    return user.save().then(function (newUser) {
-      return new Promise(function (resolve, reject) {
-         newUser.populate("role", function (error, populatedUser) {
-            if (error) {
-               (0, _convertMongooseToReadableError2.default)(error).catch(reject);
-            } else {
-               resolve(populatedUser);
-            }
-         });
-      });
+      return findUserById(newUser.id);
    }).catch(_convertMongooseToReadableError2.default);
 };
 
@@ -97,12 +99,13 @@ var createUser = function createUser(userData) {
  */
 var updateUser = function updateUser(userData, userId) {
    var set = {
+      email: userData.email,
       name: userData.name
    };
    if (userData.role) {
       set.role = userData.role;
    }
-   return _models.userModel.findByIdAndUpdate(userId, { $set: set }).populate("role").exec().catch(_convertMongooseToReadableError2.default);
+   return _populated(_models.userModel.findByIdAndUpdate(userId, { $set: set })).catch(_convertMongooseToReadableError2.default);
 };
 
 /**
@@ -177,7 +180,7 @@ var changeUserPassword = function changeUserPassword(passwordChangeData, userId)
  * @returns {Promise} of deleted user
  */
 var deleteUser = function deleteUser(userId) {
-   return _models.userModel.findByIdAndRemove(userId).populate("role").exec().then(function (user) {
+   return _populated(_models.userModel.findByIdAndRemove(userId)).then(function (user) {
       if (user) {
          return user;
       } else {

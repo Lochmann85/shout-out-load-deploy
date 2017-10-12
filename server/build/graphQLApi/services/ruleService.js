@@ -7,20 +7,16 @@ exports.addResolversTo = exports.queries = exports.types = undefined;
 
 var _graphqlTools = require('graphql-tools');
 
-// import {
-//    roleAdministration,
-// } from './../../authorizationApi/authorizationService';
+var _ruleDbService = require('./../../mongoDbApi/services/rule/ruleDbService');
 
-// import { possibleRules } from './../../authorizationApi/possibleRules';
+var types = '\ntype Rule {\n   id: ID!\n   name: String!\n}';
 
-var types = '\ntype Ruleset {\n   read: Boolean!\n   write: Boolean!\n   delete: Boolean!\n}\ntype Rule {\n   id: ID!\n   name: String!\n   ruleset: Ruleset!\n}\ninput RuleData {\n   name: String\n   ruleset: RulesetData\n}\ninput RulesetData {\n   read: Boolean\n   write: Boolean\n   delete: Boolean\n}';
-
-var queries = '\ngetAllRuleNames: [String!]\n';
+var queries = '\ngetAllRules: [Rule!]\n';
 
 var _queriesResolver = {
    Query: {
-      getAllRuleNames: /*roleAdministration("rw")*/function getAllRuleNames() {
-         return null;
+      getAllRules: function getAllRules() {
+         return (0, _ruleDbService.findAllRules)();
       }
    }
 };

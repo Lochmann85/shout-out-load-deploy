@@ -12,16 +12,9 @@ var _mongooseUniqueValidator = require('mongoose-unique-validator');
 
 var _mongooseUniqueValidator2 = _interopRequireDefault(_mongooseUniqueValidator);
 
-var _ruleModel = require('./ruleModel');
-
-var _ruleModel2 = _interopRequireDefault(_ruleModel);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import {
-//    possibleRules,
-//    possibleRulesets
-// } from './../../../authorizationApi/possibleRules';
+var ObjectId = _mongoose2.default.Schema.Types.ObjectId;
 
 var roleSchema = new _mongoose2.default.Schema({
    name: {
@@ -32,7 +25,7 @@ var roleSchema = new _mongoose2.default.Schema({
    isStatic: {
       type: Boolean
    },
-   rules: [_ruleModel2.default.schema]
+   rules: [{ type: ObjectId, ref: "Rule" }]
 }, { timestamps: true });
 
 var duplicateErrorMessage = 'There already exists a role with the given name.';
@@ -69,51 +62,6 @@ roleSchema.post("findOneAndUpdate", function (error, user, next) {
       next(error);
    }
 });
-
-/**
- * @public
- * @function buildRoleWithRules
- * @description builds a new role with the selected rules
- * @param {object} roleData - user input
- * @returns {Promise} of new Instance of role model
- */
-// roleSchema.statics.buildRoleWithRules = function (roleData) {
-//    return new Promise((resolve, reject) => {
-//       const Rule = this.internalModels.Rule,
-//          rules = [];
-//       possibleRules.forEach(possibleRule => {
-//          const rule = {
-//             name: possibleRule.name,
-//             ruleset: {}
-//          };
-//          const foundRule = roleData.rules.find(rule => rule.name === possibleRule.name);
-//          if (foundRule)
-//             rule.ruleset = foundRule.ruleset;
-//          else
-//             possibleRulesets.forEach(possibleRule => {
-//                rule.ruleset[possibleRule] = false;
-//             });
-//          rules.push(new Rule(rule));
-//       });
-
-//       resolve(new this({
-//          name: roleData.name,
-//          rules,
-//          isStatic: false
-//       }));
-//    });
-// };
-
-/**
- * @public
- * @function instantiateInternalModels
- * @description instantiates the models of the internally used schemas
- * @param {object} mongoDbConnection - the connection to the mongoDb
- */
-roleSchema.statics.instantiateInternalModels = function (mongoDbConnection) {
-   this.internalModels = {};
-   this.internalModels[_ruleModel2.default.name] = mongoDbConnection.model(_ruleModel2.default.name, _ruleModel2.default.schema);
-};
 
 exports.default = {
    schema: roleSchema,

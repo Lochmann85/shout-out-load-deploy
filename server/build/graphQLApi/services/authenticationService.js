@@ -11,45 +11,59 @@ var _authenticationDbService = require('./../../mongoDbApi/services/user/authent
 
 var _jwtService = require('./../../jwtApi/jwtService');
 
-var types = '\ninterface IAuthorized {\n   id: ID!\n   name: String!\n   role: Role!\n}\ntype Viewer implements IUser, IAuthorized {\n   id: ID!\n   name: String!\n   token: String!\n   role: Role!\n}\ninput Credentials {\n   name: String\n   password: String\n}\n';
+var types = '\ntype MenuItem {\n   label: String!\n   path: String!\n}\ntype MenuGroup {\n   label: String!\n   menuItems: [MenuItem!]!\n   subMenus: [MenuGroup!]\n}\ninterface IAuthorized {\n   id: ID!\n   name: String!\n   role: Role!\n   navigation: [MenuGroup!]\n}\ntype Viewer implements IUser, IAuthorized {\n   id: ID!\n   name: String!\n   token: String!\n   role: Role!\n   navigation: [MenuGroup!]\n}\ninput Credentials {\n   email: String\n   password: String\n}\n';
 
 var queries = '\ngetViewer: Viewer!\n';
 
 var _queriesResolver = {
    Query: {
-      getViewer: function getViewer(_, args, context) {
-         var knownViewer = context.viewer;
+      getViewer: function getViewer(_, args, _ref) {
+         var viewer = _ref.viewer,
+             tokenHandler = _ref.tokenHandler;
 
-         return (0, _jwtService.createNewToken)(knownViewer).then(function (token) {
-            return {
-               id: knownViewer.id,
-               name: knownViewer.name,
-               role: knownViewer.role,
-               token: token
-            };
+         return tokenHandler.encrypt(viewer).then(function (token) {
+            viewer.token = token;
+            return viewer;
          });
       }
    }
 };
 
-var mutations = '\nlogin(credentials: Credentials): Viewer!\n';
+var mutations = '\nlogin(credentials: Credentials): Viewer!\nsendResetPassword(email: String): Boolean!\nresetPassword(password: String, token: String): Boolean!\n';
 
 var _mutationsResolver = {
    Mutation: {
-      login: function login(_, _ref) {
-         var credentials = _ref.credentials;
+      login: function login(_, _ref2, _ref3) {
+         var credentials = _ref2.credentials;
+         var tokenHandler = _ref3.tokenHandler;
 
          var knownUser = null;
          return (0, _authenticationDbService.authenticateUser)(credentials).then(function (user) {
             knownUser = user;
-            return (0, _jwtService.createNewToken)(knownUser);
+            return tokenHandler.encrypt(knownUser);
          }).then(function (token) {
             return {
                id: knownUser.id,
-               name: knownUser.name,
                token: token
             };
          });
+      },
+      sendResetPassword: function sendResetPassword(_, _ref4) {
+         var email = _ref4.email;
+
+         return (0, _authenticationDbService.findUserByEMail)(email).then(function (knownUser) {
+            return (0, _jwtService.createNewResetPasswordToken)(knownUser).then(function (token) {
+               return (0, _authenticationDbService.updateResetPwdTokenInUser)(token, knownUser.id).then(function (user) {
+                  return true;
+               });
+            });
+         });
+      },
+      resetPassword: function resetPassword(_, _ref5) {
+         var password = _ref5.password,
+             token = _ref5.token;
+
+         return true;
       }
    }
 };

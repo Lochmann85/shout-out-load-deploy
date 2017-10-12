@@ -33,7 +33,11 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
    function SubscriptionAuthenticationMiddleware() {
       _classCallCheck(this, SubscriptionAuthenticationMiddleware);
 
-      var _this = _possibleConstructorReturn(this, (SubscriptionAuthenticationMiddleware.__proto__ || Object.getPrototypeOf(SubscriptionAuthenticationMiddleware)).call(this, new _jwtService.GraphQLTokenHandler()));
+      var _this = _possibleConstructorReturn(this, (SubscriptionAuthenticationMiddleware.__proto__ || Object.getPrototypeOf(SubscriptionAuthenticationMiddleware)).call(this, {
+         sendResetPasswordMutation: new _jwtService.GraphQLTokenHandler(), //TODO: needs different token handler
+         resetPasswordMutation: new _jwtService.GraphQLTokenHandler(), //TODO: needs different token handler
+         default: new _jwtService.GraphQLTokenHandler()
+      }));
 
       _this._notAuthenticatedRequests = [{
          operationName: "shoutsQueueQuery",
@@ -47,9 +51,6 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
       }, {
          operationName: "loginMutation",
          searchString: "login"
-      }, {
-         operationName: "pushShoutMutation",
-         searchString: "pushShout"
       }, {
          operationName: "sendResetPasswordMutation",
          searchString: "sendResetPassword"
@@ -91,6 +92,34 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
 
       /**
        * @protected
+       * @function _getTokenHandlerFromRequest
+       * @description gets the encrypted token from the input and the token mapping
+       * @param {array} args the args array
+       * @param {object} tokenHandlerMap the token handler mapping
+       * @returns {bool} true when request is allowed
+       */
+
+   }, {
+      key: '_getTokenHandlerFromRequest',
+      value: function _getTokenHandlerFromRequest(args, tokenHandlerMap) {
+         var _args2 = _slicedToArray(args, 6),
+             schema = _args2[0],
+             document = _args2[1],
+             root = _args2[2],
+             context = _args2[3],
+             variables = _args2[4],
+             operation = _args2[5]; // eslint-disable-line no-unused-vars
+
+         var tokenHandler = tokenHandlerMap.operation;
+         if (tokenHandler) {
+            return tokenHandler;
+         } else {
+            return tokenHandlerMap.default;
+         }
+      }
+
+      /**
+       * @protected
        * @function _getEncryptedToken
        * @description gets the encrypted token from the input
        * @param {array} args the args array
@@ -100,13 +129,13 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
    }, {
       key: '_getEncryptedToken',
       value: function _getEncryptedToken(args) {
-         var _args2 = _slicedToArray(args, 6),
-             schema = _args2[0],
-             document = _args2[1],
-             root = _args2[2],
-             context = _args2[3],
-             variables = _args2[4],
-             operation = _args2[5]; // eslint-disable-line no-unused-vars
+         var _args3 = _slicedToArray(args, 6),
+             schema = _args3[0],
+             document = _args3[1],
+             root = _args3[2],
+             context = _args3[3],
+             variables = _args3[4],
+             operation = _args3[5]; // eslint-disable-line no-unused-vars
 
 
          return variables && variables.token ? variables.token : undefined;
@@ -123,13 +152,13 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
    }, {
       key: '_addContext',
       value: function _addContext(args, additionalContext) {
-         var _args3 = _slicedToArray(args, 6),
-             schema = _args3[0],
-             document = _args3[1],
-             root = _args3[2],
-             context = _args3[3],
-             variables = _args3[4],
-             operation = _args3[5]; // eslint-disable-line no-unused-vars
+         var _args4 = _slicedToArray(args, 6),
+             schema = _args4[0],
+             document = _args4[1],
+             root = _args4[2],
+             context = _args4[3],
+             variables = _args4[4],
+             operation = _args4[5]; // eslint-disable-line no-unused-vars
 
 
          Object.assign(context, additionalContext);
