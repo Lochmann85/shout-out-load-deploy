@@ -46,7 +46,7 @@ var initializeGraphQLService = function initializeGraphQLService(serverConfig) {
       if (process.env.NODE_ENV === "production") {
          appServer.use(_express2.default.static(reactAppDirectory));
 
-         app.get("/*", function (request, response) {
+         appServer.get("/*", function (request, response) {
             // catch all routes and return index.html for production
             response.sendFile(_path2.default.join(reactAppDirectory, "index.html"));
          });
