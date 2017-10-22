@@ -13,6 +13,10 @@ var _convertMongooseToReadableError2 = _interopRequireDefault(_convertMongooseTo
 
 var _errorsApi = require('./../../../errorsApi');
 
+var _shoutDbService = require('./../shout/shoutDbService');
+
+var _storageService = require('./../../../storageApi/storageService');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -182,7 +186,10 @@ var changeUserPassword = function changeUserPassword(passwordChangeData, userId)
 var deleteUser = function deleteUser(userId) {
    return _populated(_models.userModel.findByIdAndRemove(userId)).then(function (user) {
       if (user) {
-         return user;
+         _storageService.storeUpdater.removeShoutsOfUser(user.id);
+         return (0, _shoutDbService.removeShoutsOfUser)(user.id).then(function () {
+            return user;
+         });
       } else {
          return Promise.reject({
             errors: [{ message: 'Could not find user to delete' }]

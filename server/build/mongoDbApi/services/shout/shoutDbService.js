@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
    value: true
 });
-exports.createShout = exports.cycle = exports.findAllShouts = undefined;
+exports.removeShoutsOfUser = exports.createShout = exports.cycle = exports.findAllShouts = undefined;
 
 var _configurations = require('./../../../configurations');
 
@@ -18,13 +18,23 @@ var _errorsApi = require('./../../../errorsApi');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
+ * @private
+ * @function _populated
+ * @description adds the needed shout population
+ * @returns {Promise} of mongoose query
+ */
+var _populated = function _populated(query) {
+   return query.populate("user").exec();
+};
+
+/**
  * @public
  * @function findAllShouts
  * @description looks for all Shouts
  * @returns {Promise} of Shouts
  */
 var findAllShouts = function findAllShouts() {
-   return _models.shoutModel.find().exec().then(function (shoutsQueue) {
+   return _populated(_models.shoutModel.find()).then(function (shoutsQueue) {
       return shoutsQueue.reverse();
    }).catch(function (error) {
       return new _errorsApi.MongooseSingleError(error);
@@ -85,6 +95,18 @@ var createShout = function createShout(shoutData) {
    });
 };
 
+/**
+ * @public
+ * @function removeShoutsOfUser
+ * @description removes all shouts of a given user
+ * @param {object} userId - user id
+ * @returns {Promise} of deleted shouts
+ */
+var removeShoutsOfUser = function removeShoutsOfUser(userId) {
+   return _models.shoutModel.remove({ user: userId }).exec();
+};
+
 exports.findAllShouts = findAllShouts;
 exports.cycle = cycle;
 exports.createShout = createShout;
+exports.removeShoutsOfUser = removeShoutsOfUser;

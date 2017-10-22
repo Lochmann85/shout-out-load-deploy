@@ -38,6 +38,16 @@ var StoreUpdater = function () {
          return _this._currentShownShout;
       };
 
+      this.removeShoutsOfUser = function (userId) {
+         if (_this._currentShownShout.user == userId) {
+            // eslint-disable-line eqeqeq
+            _this._currentShownShout = _models.shoutModel.getEmptyShout();
+         }
+         _this._pendingShoutsQueue.removeItems(function (item) {
+            return item.user != userId;
+         }); // eslint-disable-line eqeqeq
+      };
+
       this._pendingShoutsQueue = new _Queue2.default();
       this._currentShownShout = _models.shoutModel.getEmptyShout();
    }
@@ -67,7 +77,6 @@ var StoreUpdater = function () {
                   _subscriptionHandler2.default.publish("shoutsQueueChangedChannel", (0, _shoutDbService.cycle)(_this2._currentShownShout));
 
                   _this2._currentShownShout = _models.shoutModel.getEmptyShout();
-                  _subscriptionHandler2.default.publish("currentShoutChangedChannel", _this2._currentShownShout);
                }
             }
             resolve();
@@ -88,6 +97,14 @@ var StoreUpdater = function () {
        * @function getCurrentShownShout
        * @description getter for the current shown shout skeleton
        * @returns {object} current shown shout
+       */
+
+
+      /**
+       * @public
+       * @function removeShoutsOfUser
+       * @description removes all pending shouts of user
+       * @param {string} userId - user id
        */
 
    }]);

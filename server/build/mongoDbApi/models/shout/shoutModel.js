@@ -10,6 +10,8 @@ var _mongoose2 = _interopRequireDefault(_mongoose);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var ObjectId = _mongoose2.default.Schema.Types.ObjectId;
+
 var shoutSchema = new _mongoose2.default.Schema({
    message: {
       type: String,
@@ -17,6 +19,11 @@ var shoutSchema = new _mongoose2.default.Schema({
    },
    type: {
       type: String,
+      required: true
+   },
+   user: {
+      type: ObjectId,
+      ref: "User",
       required: true
    },
    shouldBeShown: {
@@ -33,8 +40,10 @@ var shoutSchema = new _mongoose2.default.Schema({
  */
 shoutSchema.statics.getEmptyShout = function () {
    return {
+      id: "",
       message: "",
       type: "Empty",
+      user: { id: "", name: "" },
       shouldBeShown: false
    };
 };
@@ -48,6 +57,7 @@ shoutSchema.statics.getEmptyShout = function () {
 shoutSchema.statics.alterShoutInput = function (shoutData) {
    return {
       message: shoutData ? shoutData.message : "",
+      user: shoutData ? shoutData.user : "",
       type: "Custom",
       shouldBeShown: true
    };

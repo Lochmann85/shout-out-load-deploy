@@ -17,7 +17,7 @@ var _subscriptionHandler2 = _interopRequireDefault(_subscriptionHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var types = '\ntype Shout {\n   message: String!\n   type: String!\n}\ninput ShoutInput {\n   message: String\n}\n';
+var types = '\ntype Shout {\n   id: ID!\n   message: String!\n   type: String!\n   user: User!\n   createdAt: String!\n}\ninput ShoutInput {\n   message: String\n}\n';
 
 var queries = '\ngetShoutsQueue: [Shout]!\ngetCurrentShout: Shout\n';
 
@@ -36,9 +36,11 @@ var mutations = '\npushShout(shout: ShoutInput): Boolean\n';
 
 var _mutationsResolver = {
    Mutation: {
-      pushShout: function pushShout(_, _ref) {
+      pushShout: function pushShout(_, _ref, _ref2) {
          var shout = _ref.shout;
+         var viewer = _ref2.viewer;
 
+         shout.user = viewer.id;
          return _storageService.storeUpdater.enqueue(shout);
       }
    }
