@@ -27,50 +27,73 @@ var BaseAuthenticationMiddleware = function () {
    }
 
    /**
-    * @public
-    * @function apply
-    * @description checks for the token in the variable and executes the graphql call
-    * if no token is present allows just allowed Requests
+    * @private
+    * @function _checkForAllowedRequests
+    * @description checks for the requests which do not need authorization
     * @param {array} args the args array
+    * @param {object} tokenHandler the token handler
     * @returns {Promise} of executed graphql schema
     */
 
 
    _createClass(BaseAuthenticationMiddleware, [{
+      key: '_checkForAllowedRequests',
+      value: function _checkForAllowedRequests(args, tokenHandler) {
+         var _this = this;
+
+         return new Promise(function (resolve, reject) {
+            try {
+               if (_this._allowedRequests(args)) {
+                  _this._addContext(args, { tokenHandler: tokenHandler });
+                  resolve(args);
+               } else {
+                  reject(new _errorsApi.UnauthorizedError());
+               }
+            } catch (error) {
+               reject(new _errorsApi.ForbiddenError());
+            }
+         });
+      }
+
+      /**
+       * @public
+       * @function apply
+       * @description checks for the token in the variable and executes the graphql call
+       * if no token is present allows just allowed Requests
+       * @param {array} args the args array
+       * @returns {Promise} of executed graphql schema
+       */
+
+   }, {
       key: 'apply',
       value: function apply(args) {
-         var _this = this;
+         var _this2 = this;
 
          return new Promise(function (resolve, reject) {
             var tokenHandler = void 0;
             try {
-               tokenHandler = _this._getTokenHandlerFromRequest(args, _this._tokenHandlerMap);
+               tokenHandler = _this2._getTokenHandlerFromRequest(args, _this2._tokenHandlerMap);
             } catch (error) {
                reject(new _errorsApi.UnauthorizedError());
             }
 
-            var encryptedToken = _this._getEncryptedToken(args);
+            var encryptedToken = _this2._getEncryptedToken(args);
             if (encryptedToken) {
                tokenHandler.validate(encryptedToken).then(function (tokenData) {
                   (0, _userDbService.findUserById)(tokenData.userId).then(function (knownViewer) {
-                     _this._addContext(args, {
+                     _this2._addContext(args, {
                         viewer: knownViewer,
                         tokenHandler: tokenHandler
                      });
                      resolve(args);
-                  }).catch(reject);
-               }).catch(reject);
+                  }).catch(function (error) {
+                     return Promise.reject(error);
+                  });
+               }).catch(function (error) {
+                  _this2._checkForAllowedRequests(args, tokenHandler).then(resolve).catch(reject);
+               });
             } else {
-               try {
-                  if (_this._allowedRequests(args)) {
-                     _this._addContext(args, { tokenHandler: tokenHandler });
-                     resolve(args);
-                  } else {
-                     reject(new _errorsApi.UnauthorizedError());
-                  }
-               } catch (error) {
-                  reject(new _errorsApi.ForbiddenError());
-               }
+               return _this2._checkForAllowedRequests(args, tokenHandler).then(resolve).catch(reject);
             }
          });
       }
