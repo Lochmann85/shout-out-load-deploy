@@ -176,6 +176,50 @@ userSchema.methods.comparePassword = function (password) {
    });
 };
 
+/**
+ * @public
+ * @function check
+ * @description checks the allowance dependend on the own rules
+ * @param {object} allowance - the needed allowance
+ * @param {object} args - the args of the request
+ * @returns {Promise} of permission granted
+ */
+userSchema.methods.check = function (allowance, args) {
+   var _this2 = this;
+
+   return new Promise(function (resolve, reject) {
+      if (_this2.role && Array.isArray(_this2.role.rules)) {
+         resolve(true);
+      } else {
+         reject(new _errorsApi.ForbiddenError());
+      }
+   }).then(function () {
+      return allowance.check(args, _this2);
+   });
+};
+
+/**
+ * @public
+ * @function has
+ * @description checks if the user has a rule
+ * @param {string} ruleName - the name of the rule
+ * @returns {Promise} of found rule
+ */
+userSchema.methods.has = function (ruleName) {
+   var _this3 = this;
+
+   return new Promise(function (resolve, reject) {
+      var foundRule = _this3.role.rules.find(function (viewerRule) {
+         return viewerRule.name === ruleName;
+      });
+      if (foundRule) {
+         resolve(true);
+      } else {
+         reject(new _errorsApi.ForbiddenError());
+      }
+   });
+};
+
 exports.default = {
    schema: userSchema,
    name: "User"

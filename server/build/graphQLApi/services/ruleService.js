@@ -9,15 +9,19 @@ var _graphqlTools = require('graphql-tools');
 
 var _ruleDbService = require('./../../mongoDbApi/services/rule/ruleDbService');
 
+var _authorizationService = require('./../../authorizationApi/authorizationService');
+
+var readRole = new _authorizationService.ReadRoleChecker();
+
 var types = '\ntype Rule {\n   id: ID!\n   name: String!\n}';
 
 var queries = '\ngetAllRules: [Rule!]\n';
 
 var _queriesResolver = {
    Query: {
-      getAllRules: function getAllRules() {
+      getAllRules: (0, _authorizationService.authorizationMiddleware)(readRole)(function () {
          return (0, _ruleDbService.findAllRules)();
-      }
+      })
    }
 };
 
