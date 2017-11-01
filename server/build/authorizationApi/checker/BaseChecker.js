@@ -9,11 +9,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var BaseChecker = function () {
-   function BaseChecker() {
+   function BaseChecker(predecessor, relation) {
       _classCallCheck(this, BaseChecker);
 
-      this._next = null;
-      this._relation = null;
+      this._predecessor = predecessor || null;
+      this._relation = this["_" + relation] || null;
    }
 
    /**
@@ -32,7 +32,7 @@ var BaseChecker = function () {
          var _this = this;
 
          return this._internalCheck(args, viewer).then(function () {
-            return _this._next.check(args, viewer);
+            return _this._predecessor.check(args, viewer);
          });
       }
 
@@ -40,14 +40,47 @@ var BaseChecker = function () {
        * @public
        * @function and
        * @description and setter for the succeeding checker
-       * @param {object} successor - the next checker
+       * @param {object} SuccessorClass - the successor class checker
        */
 
    }, {
       key: "and",
-      value: function and(successor) {
-         this._next = successor;
-         this._relation = this._and;
+      value: function and(SuccessorClass) {
+         var successor = new SuccessorClass(this, "and");
+         return successor;
+      }
+
+      /**
+       * @private
+       * @function _or
+       * @description or combines two checker
+       * @param {object} args - the args of the request
+       * @param {object} viewer - the user model of the viewer
+       * @returns {Promise} of permission
+       */
+
+   }, {
+      key: "_or",
+      value: function _or(args, viewer) {
+         var _this2 = this;
+
+         return this._internalCheck(args, viewer).catch(function (error) {
+            return _this2._predecessor.check(args, viewer);
+         });
+      }
+
+      /**
+       * @public
+       * @function or
+       * @description or setter for the succeeding checker
+       * @param {object} SuccessorClass - the successor class checker
+       */
+
+   }, {
+      key: "or",
+      value: function or(SuccessorClass) {
+         var successor = new SuccessorClass(this, "or");
+         return successor;
       }
 
       /**
@@ -62,7 +95,7 @@ var BaseChecker = function () {
    }, {
       key: "check",
       value: function check(args, viewer) {
-         if (this._next) {
+         if (this._predecessor) {
             return this._relation(args, viewer);
          } else {
             return this._internalCheck(args, viewer);

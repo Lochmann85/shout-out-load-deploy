@@ -9,8 +9,12 @@ var _graphqlTools = require('graphql-tools');
 
 var _roleDbService = require('./../../mongoDbApi/services/role/roleDbService');
 
-// import { and } from './../../helper/compositions';
-// import { roleAdministration, notOwnRole } from './../../authorizationApi/authorizationService';
+var _authorizationService = require('./../../authorizationApi/authorizationService');
+
+var readRole = new _authorizationService.ReadRoleChecker();
+var createRoleRead = new _authorizationService.ReadRoleChecker();
+var updateRoleRead = new _authorizationService.ReadRoleChecker();
+var deleteRoleRead = new _authorizationService.ReadRoleChecker();
 
 var types = '\ntype Role {\n   id: ID!\n   name: String!\n   createdAt: String!\n   isStatic: Boolean!\n   rules: [Rule!]\n}\ninput RoleData {\n   name: String\n   rules: [ID!]\n}';
 
@@ -20,36 +24,36 @@ var mutations = '\n   createRole(roleData: RoleData): Role!\n   updateRole(roleD
 
 var _queriesResolver = {
    Query: {
-      getAllRoles: /*roleAdministration("r")*/function getAllRoles() {
+      getAllRoles: (0, _authorizationService.authorizationMiddleware)(readRole)(function () {
          return (0, _roleDbService.findAllRoles)();
-      },
-      getRole: /*roleAdministration("r")*/function getRole(_, _ref) {
+      }),
+      getRole: (0, _authorizationService.authorizationMiddleware)(readRole)(function (_, _ref) {
          var roleId = _ref.roleId;
 
          return (0, _roleDbService.findRoleById)(roleId);
-      }
+      })
    }
 };
 
 var _mutationsResolver = {
    Mutation: {
-      createRole: /*roleAdministration("rw")*/function createRole(_, _ref2) {
+      createRole: (0, _authorizationService.authorizationMiddleware)(createRoleRead.and(_authorizationService.WriteRoleChecker))(function (_, _ref2) {
          var roleData = _ref2.roleData;
 
          return (0, _roleDbService.createRole)(roleData);
-      },
-      updateRole: /*and(roleAdministration("rw"), notOwnRole())*/function updateRole(_, _ref3, _ref4) {
+      }),
+      updateRole: (0, _authorizationService.authorizationMiddleware)(updateRoleRead.and(_authorizationService.WriteRoleChecker).and(_authorizationService.NotOwnRoleChecker))(function (_, _ref3, _ref4) {
          var roleData = _ref3.roleData,
              roleId = _ref3.roleId;
          var viewer = _ref4.viewer;
 
          return (0, _roleDbService.updateRole)(roleData, roleId);
-      },
-      deleteRole: /*and(roleAdministration("rd"), notOwnRole())*/function deleteRole(_, _ref5) {
+      }),
+      deleteRole: (0, _authorizationService.authorizationMiddleware)(deleteRoleRead.and(_authorizationService.DeleteRoleChecker).and(_authorizationService.NotOwnRoleChecker))(function (_, _ref5) {
          var roleId = _ref5.roleId;
 
          return (0, _roleDbService.deleteRole)(roleId);
-      }
+      })
    }
 };
 
