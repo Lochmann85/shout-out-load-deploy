@@ -11,7 +11,7 @@ var _authenticationDbService = require('./../../mongoDbApi/services/user/authent
 
 var _jwtService = require('./../../jwtApi/jwtService');
 
-var types = '\ntype MenuItem {\n   label: String!\n   path: String!\n}\ntype MenuGroup {\n   label: String!\n   menuItems: [MenuItem!]!\n   subMenus: [MenuGroup!]\n}\ninterface IAuthorized {\n   id: ID!\n   name: String!\n   role: Role!\n   navigation: [MenuGroup!]\n}\ntype Viewer implements IUser, IAuthorized {\n   id: ID!\n   name: String!\n   token: String!\n   role: Role!\n   navigation: [MenuGroup!]\n}\ninput Credentials {\n   email: String\n   password: String\n}\n';
+var types = '\ninterface IAuthorized {\n   id: ID!\n   name: String!\n   role: Role!\n}\ntype Viewer implements IUser, IAuthorized {\n   id: ID!\n   name: String!\n   token: String!\n   role: Role!\n}\ninput Credentials {\n   email: String\n   password: String\n}\n';
 
 var queries = '\ngetViewer: Viewer!\n';
 

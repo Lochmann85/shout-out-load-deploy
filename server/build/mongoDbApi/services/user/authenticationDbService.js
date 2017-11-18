@@ -28,7 +28,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var findUserByEMail = function findUserByEMail(email) {
    if ((0, _validator.isEmail)(email)) {
-      var userQuery = _models.userModel.findOne({ email: email });
+      var userQuery = _models.userModel.findOne({ email: email.toLowerCase() });
 
       return (0, _userDbService.findUser)(userQuery);
    } else {

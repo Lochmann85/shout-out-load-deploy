@@ -86,6 +86,7 @@ var findAllUsers = function findAllUsers() {
  * @returns {Promise} of new user
  */
 var createUser = function createUser(userData) {
+   userData.email = userData.email.toLowerCase();
    var user = new _models.userModel(userData); // eslint-disable-line new-cap
 
    return user.save().then(function (newUser) {
@@ -103,9 +104,12 @@ var createUser = function createUser(userData) {
  */
 var updateUser = function updateUser(userData, userId) {
    var set = {
-      email: userData.email,
       name: userData.name
    };
+
+   if (userData.email) {
+      set.email = userData.email.toLowerCase();
+   }
    if (userData.role) {
       set.role = userData.role;
    }

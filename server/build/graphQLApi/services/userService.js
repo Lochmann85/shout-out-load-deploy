@@ -50,9 +50,9 @@ var _mutationsResolver = {
              userId = _ref3.userId;
          var viewer = _ref4.viewer;
 
-         var notSelf = new _authorizationService.NotSelfChecker();
          if (userData.role) {
-            return notSelf.check({ userId: userId }, viewer).then(function () {
+            var notSelf = new _authorizationService.NotSelfChecker();
+            return notSelf.and(_authorizationService.WriteUserChecker).check({ userId: userId }, viewer).then(function () {
                return (0, _userDbService.updateUser)(userData, userId);
             }).catch(function (error) {
                if (error.name === "Forbidden") {
@@ -63,6 +63,16 @@ var _mutationsResolver = {
                } else {
                   return error;
                }
+            });
+         } else if (userData.email) {
+            var _notSelf = new _authorizationService.NotSelfChecker();
+            return _notSelf.and(_authorizationService.WriteUserChecker).check({ userId: userId }, viewer).then(function () {
+               return (0, _userDbService.updateUser)(userData, userId);
+            }).catch(function (error) {
+               return new _errorsApi.CustomError("ChangeSelfParametersNotAllowed", {
+                  message: "You cannot change your email.",
+                  key: "email"
+               });
             });
          } else {
             return (0, _userDbService.updateUser)(userData, userId);
