@@ -43,7 +43,7 @@ var initializeGraphQLService = function initializeGraphQLService(serverConfig) {
       exports.appServer = appServer = (0, _express2.default)();
 
       // Express only serves static assets in production
-      if (process.env.NODE_ENV === "production") {
+      if (serverConfig.isInProductionMode) {
          appServer.use(_express2.default.static(reactAppDirectory));
 
          appServer.get("/*", function (request, response) {

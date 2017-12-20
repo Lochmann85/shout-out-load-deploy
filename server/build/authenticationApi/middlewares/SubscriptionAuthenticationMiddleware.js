@@ -36,6 +36,7 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
       var _this = _possibleConstructorReturn(this, (SubscriptionAuthenticationMiddleware.__proto__ || Object.getPrototypeOf(SubscriptionAuthenticationMiddleware)).call(this, {
          sendResetPasswordMutation: new _jwtService.GraphQLTokenHandler(), //TODO: needs different token handler
          resetPasswordMutation: new _jwtService.GraphQLTokenHandler(), //TODO: needs different token handler
+         signupMutation: new _jwtService.SignupTokenHandler(),
          default: new _jwtService.GraphQLTokenHandler()
       }));
 
@@ -51,6 +52,9 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
       }, {
          operationName: "loginMutation",
          searchString: "login"
+      }, {
+         operationName: "signupMutation",
+         searchString: "signup"
       }, {
          operationName: "sendResetPasswordMutation",
          searchString: "sendResetPassword"
@@ -110,7 +114,7 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
              variables = _args2[4],
              operation = _args2[5]; // eslint-disable-line no-unused-vars
 
-         var tokenHandler = tokenHandlerMap.operation;
+         var tokenHandler = tokenHandlerMap[operation];
          if (tokenHandler) {
             return tokenHandler;
          } else {

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
    value: true
 });
-exports.deleteRole = exports.updateRole = exports.createRole = exports.findRoleById = exports.findAllRoles = undefined;
+exports.findDefaultRole = exports.deleteRole = exports.updateRole = exports.createRole = exports.findRoleById = exports.findAllRoles = undefined;
 
 var _models = require('./../../models');
 
@@ -26,6 +26,13 @@ var staticRoleError = new _errorsApi.CustomError("StaticRole", {
    message: "The static role cannot be changed.",
    key: ""
 });
+
+/**
+ * @private
+ * @member staticDefaultRoleName
+ * @description name of the default role
+ */
+var staticDefaultRoleName = "whisperer";
 
 /**
  * @public
@@ -114,6 +121,18 @@ var updateRole = function updateRole(roleData, roleId) {
 };
 
 /**
+ * @public
+ * @function findDefaultRole
+ * @description finds the default role for a user
+ * @returns {Promise} of default role
+ */
+var findDefaultRole = function findDefaultRole() {
+   var roleQuery = _models.roleModel.findOne({ name: staticDefaultRoleName });
+
+   return _findRole(roleQuery);
+};
+
+/**
  * @private
  * @function _updateRelatedUser
  * @description changes the role of the users to the default one
@@ -121,9 +140,7 @@ var updateRole = function updateRole(roleData, roleId) {
  * @returns {Promise} of default role
  */
 var _updateRelatedUser = function _updateRelatedUser(role) {
-   var roleQuery = _models.roleModel.findOne({ name: "whisperer" });
-
-   return _findRole(roleQuery).then(function (defaultRole) {
+   return findDefaultRole().then(function (defaultRole) {
       var searchParams = { role: role.id },
           set = { role: defaultRole.id };
       return (0, _userDbService.updateUsers)(searchParams, set).then(function () {
@@ -164,3 +181,4 @@ exports.findRoleById = findRoleById;
 exports.createRole = createRole;
 exports.updateRole = updateRole;
 exports.deleteRole = deleteRole;
+exports.findDefaultRole = findDefaultRole;
