@@ -21,6 +21,9 @@
       "jsonwebtoken": "^7.4.1",
       "mongoose": "^4.11.11",
       "mongoose-unique-validator": "^1.0.5",
+      "nodemailer": "^4.4.1",
+      "nodemailer-smtp-transport": "^2.7.4",
+      "smtp-server": "^3.4.1",
       "subscriptions-transport-ws": "0.8.1",
       "validator": "^9.0.0"
    },
