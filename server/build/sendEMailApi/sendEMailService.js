@@ -51,7 +51,6 @@ var _setupSmtpTransporter = function _setupSmtpTransporter(serverConfig) {
    if (serverConfig.isInProductionMode) {
       var transport = (0, _nodemailerSendgridTransport2.default)({
          auth: {
-            api_user: serverConfig.SMTP.USER,
             api_key: serverConfig.SMTP.API_KEY
          }
       });
