@@ -21,6 +21,10 @@ var _nodemailer = require('nodemailer');
 
 var _nodemailer2 = _interopRequireDefault(_nodemailer);
 
+var _nodemailerSendgridTransport = require('nodemailer-sendgrid-transport');
+
+var _nodemailerSendgridTransport2 = _interopRequireDefault(_nodemailerSendgridTransport);
+
 var _initializeDebugSmtpServer = require('./initializeDebugSmtpServer');
 
 var _initializeDebugSmtpServer2 = _interopRequireDefault(_initializeDebugSmtpServer);
@@ -45,13 +49,14 @@ var _smtpTransporter = void 0;
  */
 var _setupSmtpTransporter = function _setupSmtpTransporter(serverConfig) {
    if (serverConfig.isInProductionMode) {
-      _smtpTransporter = _nodemailer2.default.createTransport({
-         service: "SendGrid",
+      var transport = (0, _nodemailerSendgridTransport2.default)({
          auth: {
             api_user: serverConfig.SMTP.USER,
             api_key: serverConfig.SMTP.API_KEY
          }
       });
+
+      _smtpTransporter = _nodemailer2.default.createTransport(transport);
    } else {
       _smtpTransporter = _nodemailer2.default.createTransport({
          service: "SMTP",
