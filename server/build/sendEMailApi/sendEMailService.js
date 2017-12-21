@@ -21,10 +21,6 @@ var _nodemailer = require('nodemailer');
 
 var _nodemailer2 = _interopRequireDefault(_nodemailer);
 
-var _nodemailerSmtpTransport = require('nodemailer-smtp-transport');
-
-var _nodemailerSmtpTransport2 = _interopRequireDefault(_nodemailerSmtpTransport);
-
 var _initializeDebugSmtpServer = require('./initializeDebugSmtpServer');
 
 var _initializeDebugSmtpServer2 = _interopRequireDefault(_initializeDebugSmtpServer);
@@ -50,14 +46,14 @@ var _smtpTransporter = void 0;
 var _setupSmtpTransporter = function _setupSmtpTransporter(serverConfig) {
    if (serverConfig.isInProductionMode) {
       _smtpTransporter = _nodemailer2.default.createTransport({
-         service: "Mailgun",
+         service: "SendGrid",
          auth: {
-            user: serverConfig.SMTP.USER,
-            pass: serverConfig.SMTP.PASSWORD
+            api_key: serverConfig.SMTP.API_KEY
          }
       });
    } else {
-      _smtpTransporter = _nodemailer2.default.createTransport((0, _nodemailerSmtpTransport2.default)({
+      _smtpTransporter = _nodemailer2.default.createTransport({
+         service: "SMTP",
          host: serverConfig.SMTP.IP,
          port: serverConfig.SMTP.PORT,
          secure: false,
@@ -65,7 +61,7 @@ var _setupSmtpTransporter = function _setupSmtpTransporter(serverConfig) {
             user: serverConfig.SMTP.USER,
             pass: serverConfig.SMTP.PASSWORD
          }
-      }));
+      });
    }
 };
 

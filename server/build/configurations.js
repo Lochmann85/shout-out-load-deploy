@@ -13,10 +13,11 @@ var serverConfig = {
    MONGODB_URI: process.env.MONGODB_URI || "mongodb://shout-out-loud:storage@127.0.0.1:27017/solDb",
    isInProductionMode: process.env.NODE_ENV === "production",
    SMTP: {
-      IP: process.env.MAILGUN_SMTP_SERVER || "localhost",
-      PORT: process.env.MAILGUN_SMTP_PORT || "8025",
-      USER: process.env.MAILGUN_SMTP_LOGIN || "smtpUser",
-      PASSWORD: process.env.MAILGUN_SMTP_PASSWORD || "pwd"
+      IP: process.env.SMTP_SERVER || "localhost",
+      PORT: process.env.SMTP_PORT || "8025",
+      USER: process.env.SENDGRID_USERNAME || "smtpUser",
+      PASSWORD: process.env.SENDGRID_PASSWORD || "pwd",
+      API_KEY: process.env.SENDGRID_API_KEY || "api_key"
    }
 };
 
