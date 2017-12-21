@@ -48,6 +48,7 @@ var _setupSmtpTransporter = function _setupSmtpTransporter(serverConfig) {
       _smtpTransporter = _nodemailer2.default.createTransport({
          service: "SendGrid",
          auth: {
+            api_user: serverConfig.SMTP.USER,
             api_key: serverConfig.SMTP.API_KEY
          }
       });
@@ -101,7 +102,7 @@ var sendEMail = function sendEMail(emailTemplate, user) {
          to: user.email,
          replyTo: "no-reply@shout-out-loud.com",
          subject: email.subject,
-         text: email.html
+         html: email.html
       }, function (error, info) {
          if (error) {
             reject(new _errorsApi.InternalServerError({
