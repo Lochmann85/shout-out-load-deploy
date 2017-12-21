@@ -48,8 +48,7 @@ var _setupSmtpTransporter = function _setupSmtpTransporter(serverConfig) {
       _smtpTransporter = _nodemailer2.default.createTransport({
          service: "SendGrid",
          auth: {
-            user: serverConfig.SMTP.USER,
-            pass: serverConfig.SMTP.PASSWORD
+            api_key: serverConfig.SMTP.API_KEY
          }
       });
    } else {
