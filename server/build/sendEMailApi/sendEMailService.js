@@ -49,7 +49,7 @@ var _setupSmtpTransporter = function _setupSmtpTransporter(serverConfig) {
          service: "SendGrid",
          auth: {
             user: serverConfig.SMTP.USER,
-            api_key: serverConfig.SMTP.API_KEY
+            pass: serverConfig.SMTP.PASSWORD
          }
       });
    } else {
