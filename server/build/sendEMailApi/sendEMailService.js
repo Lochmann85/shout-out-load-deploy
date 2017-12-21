@@ -51,7 +51,7 @@ var _setupSmtpTransporter = function _setupSmtpTransporter(serverConfig) {
    if (serverConfig.isInProductionMode) {
       var transport = (0, _nodemailerSendgridTransport2.default)({
          auth: {
-            api_key: serverConfig.SMTP.API_KEY
+            api_key: serverConfig.SMTP.API_KEY //eslint-disable-line camelcase
          }
       });
 

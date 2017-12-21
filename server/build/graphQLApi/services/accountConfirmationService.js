@@ -21,8 +21,8 @@ var _mutationsResolver = {
          var newAccount = _ref.newAccount;
          var tokenHandler = _ref2.tokenHandler;
 
-         return (0, _accountConfirmationDbService.createAccountConfirmation)(newAccount, tokenHandler).then(function (accoutnConfirmation) {
-            return (0, _sendEMailService.sendEMail)(_sendEMailService.signupTemplate, accoutnConfirmation);
+         return (0, _accountConfirmationDbService.createAccountConfirmation)(newAccount, tokenHandler).then(function (accountConfirmation) {
+            return (0, _sendEMailService.sendEMail)(_sendEMailService.signupTemplate, accountConfirmation);
          });
       }
    }
