@@ -14,7 +14,7 @@ var _configurations = require('./../../configurations');
  * @returns {function} generates html
  */
 exports.default = function (accountConfirmation) {
-   var link = 'http://' + _configurations.serverConfig.APP_URL + '/signup/' + accountConfirmation.confirmAccountToken;
+   var link = _configurations.serverConfig.URL + '/signup/' + accountConfirmation.confirmAccountToken;
 
    return {
       subject: 'Shout Out Loud signup',

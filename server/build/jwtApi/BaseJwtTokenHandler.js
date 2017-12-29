@@ -35,7 +35,7 @@ function BaseJwtTokenHandler(secret, expirationTime) {
                resolve(decodedToken);
             } else {
                if (error.name === "TokenExpiredError") {
-                  reject(new _errorsApi.UnauthorizedError());
+                  reject(_this._tokenExpiredError());
                } else {
                   reject(new _errorsApi.InternalServerError({
                      message: error.message,
@@ -68,6 +68,10 @@ function BaseJwtTokenHandler(secret, expirationTime) {
       });
    };
 
+   this._tokenExpiredError = function () {
+      throw new Error("BaseJwtTokenHandler._tokenExpiredError has to be implemented.");
+   };
+
    this._secret = secret;
    this._expirationTime = expirationTime;
 }
@@ -87,6 +91,14 @@ function BaseJwtTokenHandler(secret, expirationTime) {
  * @description encrypts the current jwt with the user id
  * @param {object} user - the authenticated user
  * @returns {Promise} of new token
+ */
+
+
+/**
+ * @protected
+ * @function _tokenExpiredError
+ * @description the error which is used when the token is expired
+ * @returns {object} error object
  */
 ;
 

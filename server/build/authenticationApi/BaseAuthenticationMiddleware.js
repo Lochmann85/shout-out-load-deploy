@@ -87,7 +87,7 @@ var BaseAuthenticationMiddleware = function () {
                      });
                      resolve(args);
                   }).catch(function (error) {
-                     return Promise.reject(error);
+                     return reject(error);
                   });
                }).catch(function (error) {
                   _this2._checkForAllowedRequests(args, tokenHandler).then(resolve).catch(reject);

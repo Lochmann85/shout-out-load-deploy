@@ -91,7 +91,7 @@ var createUser = function createUser(userData) {
    }
    var user = new _models.userModel(userData); // eslint-disable-line new-cap
 
-   return user.save().then(function (newUser) {
+   return user.saveWithHashedPassword().then(function (newUser) {
       return findUserById(newUser.id);
    }).catch(_convertMongooseToReadableError2.default);
 };

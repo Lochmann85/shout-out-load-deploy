@@ -8,6 +8,8 @@ var _BaseJwtTokenHandler2 = require('./../BaseJwtTokenHandler');
 
 var _BaseJwtTokenHandler3 = _interopRequireDefault(_BaseJwtTokenHandler2);
 
+var _errorsApi = require('./../../errorsApi');
+
 var _configurations = require('./../../configurations');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -29,8 +31,22 @@ var GraphQLTokenHandler = function (_BaseJwtTokenHandler) {
    function GraphQLTokenHandler() {
       _classCallCheck(this, GraphQLTokenHandler);
 
-      return _possibleConstructorReturn(this, (GraphQLTokenHandler.__proto__ || Object.getPrototypeOf(GraphQLTokenHandler)).call(this, _configurations.GRAPHQL_JWT_SECRET, 60 * 60 * 24 /*one day*/));
+      var _this = _possibleConstructorReturn(this, (GraphQLTokenHandler.__proto__ || Object.getPrototypeOf(GraphQLTokenHandler)).call(this, _configurations.GRAPHQL_JWT_SECRET, 60 * 60 * 24 /*one day*/));
+
+      _this._tokenExpiredError = function () {
+         return new _errorsApi.UnauthorizedError();
+      };
+
+      return _this;
    }
+
+   /**
+    * @protected
+    * @function _tokenExpiredError
+    * @description the error which is used when the token is expired
+    * @returns {object} error object
+    */
+
 
    return GraphQLTokenHandler;
 }(_BaseJwtTokenHandler3.default);

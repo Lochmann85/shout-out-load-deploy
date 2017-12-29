@@ -14,7 +14,7 @@ var _configurations = require('./../../configurations');
  * @returns {function} generates html
  */
 exports.default = function (user) {
-   var link = 'http://' + _configurations.serverConfig.APP_URL + '/resetPassword/' + user.resetPasswordToken;
+   var link = _configurations.serverConfig.URL + '/resetPassword/' + user.resetPasswordToken;
 
    return {
       subject: 'WiFli password reset',

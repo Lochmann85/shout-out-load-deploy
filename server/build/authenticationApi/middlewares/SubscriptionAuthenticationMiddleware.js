@@ -37,6 +37,7 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
          sendResetPasswordMutation: new _jwtService.GraphQLTokenHandler(), //TODO: needs different token handler
          resetPasswordMutation: new _jwtService.GraphQLTokenHandler(), //TODO: needs different token handler
          signupMutation: new _jwtService.SignupTokenHandler(),
+         signupConfirmationQuery: new _jwtService.SignupTokenHandler(),
          default: new _jwtService.GraphQLTokenHandler()
       }));
 
@@ -55,6 +56,9 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
       }, {
          operationName: "signupMutation",
          searchString: "signup"
+      }, {
+         operationName: "signupConfirmationQuery",
+         searchString: "signupConfirmation"
       }, {
          operationName: "sendResetPasswordMutation",
          searchString: "sendResetPassword"

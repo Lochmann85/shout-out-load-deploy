@@ -58,18 +58,24 @@ var duplicateErrorMessage = "There already exists a user with the given {PATH}."
 userSchema.plugin(_mongooseUniqueValidator2.default, { message: duplicateErrorMessage });
 
 /**
- * @private
- * @function pre("save")
- * @description pre save middleware, hashes the password of each new user
+ * @public
+ * @function saveWithHashedPassword
+ * @param {object} userData - the new user data
+ * @description hashes the password of each new user
  */
-userSchema.pre("save", function (next) {
-   var newUser = this;
+userSchema.methods.saveWithHashedPassword = function () {
+   var _this = this;
 
-   // only hash the password if it has been modified (or is new)
-   if (!newUser.isModified("password")) return next();
-
-   (0, _passwordEncription.continueWithHashedPassword)(next, newUser);
-});
+   return new Promise(function (resolve, reject) {
+      (0, _passwordEncription.continueWithHashedPassword)(function (error) {
+         if (error) {
+            reject(error);
+         } else {
+            _this.save().then(resolve).catch(reject);
+         }
+      }, _this);
+   });
+};
 
 /**
  * @private
@@ -101,12 +107,12 @@ userSchema.pre("findOneAndUpdate", function (next) {
  * @returns {Promise} of user
  */
 userSchema.methods.comparePassword = function (password) {
-   var _this = this;
+   var _this2 = this;
 
    return new Promise(function (resolve, reject) {
-      _bcrypt2.default.compare(password, _this.password).then(function (isMatch) {
+      _bcrypt2.default.compare(password, _this2.password).then(function (isMatch) {
          if (isMatch) {
-            resolve(_this);
+            resolve(_this2);
          } else {
             reject(new _errorsApi.CustomError("WrongPassword", {
                message: "Please provide the correct password.",
@@ -131,16 +137,16 @@ userSchema.methods.comparePassword = function (password) {
  * @returns {Promise} of permission granted
  */
 userSchema.methods.check = function (allowance, args) {
-   var _this2 = this;
+   var _this3 = this;
 
    return new Promise(function (resolve, reject) {
-      if (_this2.role && Array.isArray(_this2.role.rules)) {
+      if (_this3.role && Array.isArray(_this3.role.rules)) {
          resolve(true);
       } else {
          reject(new _errorsApi.ForbiddenError());
       }
    }).then(function () {
-      return allowance.check(args, _this2);
+      return allowance.check(args, _this3);
    });
 };
 
@@ -152,10 +158,10 @@ userSchema.methods.check = function (allowance, args) {
  * @returns {Promise} of found rule
  */
 userSchema.methods.has = function (ruleName) {
-   var _this3 = this;
+   var _this4 = this;
 
    return new Promise(function (resolve, reject) {
-      var foundRule = _this3.role.rules.find(function (viewerRule) {
+      var foundRule = _this4.role.rules.find(function (viewerRule) {
          return viewerRule.name === ruleName;
       });
       if (foundRule) {
