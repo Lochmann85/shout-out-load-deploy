@@ -17,7 +17,7 @@ exports.default = function (user) {
    var link = _configurations.serverConfig.URL + '/resetPassword/' + user.resetPasswordToken;
 
    return {
-      subject: 'WiFli password reset',
-      html: '<h3>Hallo ' + user.name + '</h3>\n      <p>Klicken Sie auf den folgenden Link um ihr Password zu \xE4ndern:</p>\n      <a href="' + link + '">Link to reset Password</a>\n      <br />\n      <p>Mit freundlichen Gr\xFC\xDFen,<br/>Ihr Software-Team</p>'
+      subject: 'Shout Out Loud forgot password',
+      html: '<h3>Hello ' + user.name + '</h3>\n      <p>Reenter the world of thoughts with a new password.</p>\n      <a href="' + link + '">Click the link to change yours!</a>\n      <br />\n      <p>Best regards,<br/>the shout-out-loud-Team</p>'
    };
 };

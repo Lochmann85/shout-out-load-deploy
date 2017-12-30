@@ -9,7 +9,9 @@ var _graphqlTools = require('graphql-tools');
 
 var _authenticationDbService = require('./../../mongoDbApi/services/user/authenticationDbService');
 
-var _jwtService = require('./../../jwtApi/jwtService');
+var _userDbService = require('./../../mongoDbApi/services/user/userDbService');
+
+var _sendEMailService = require('./../../sendEMailApi/sendEMailService');
 
 var types = '\ninterface IAuthorized {\n   id: ID!\n   name: String!\n   role: Role!\n}\ntype Viewer implements IUser, IAuthorized {\n   id: ID!\n   name: String!\n   token: String!\n   role: Role!\n}\ninput Credentials {\n   email: String\n   password: String\n}\n';
 
@@ -29,7 +31,7 @@ var _queriesResolver = {
    }
 };
 
-var mutations = '\nlogin(credentials: Credentials): Viewer!\nsendResetPassword(email: String): Boolean!\nresetPassword(password: String, token: String): Boolean!\n';
+var mutations = '\nlogin(credentials: Credentials): Viewer!\nforgotPassword(email: String): Boolean!\nresetPassword(password: String, confirmation: String, resetPwdToken: String): Boolean!\n';
 
 var _mutationsResolver = {
    Mutation: {
@@ -48,22 +50,31 @@ var _mutationsResolver = {
             };
          });
       },
-      sendResetPassword: function sendResetPassword(_, _ref4) {
+      forgotPassword: function forgotPassword(_, _ref4, _ref5) {
          var email = _ref4.email;
+         var tokenHandler = _ref5.tokenHandler;
 
-         return (0, _authenticationDbService.findUserByEMail)(email).then(function (knownUser) {
-            return (0, _jwtService.createNewResetPasswordToken)(knownUser).then(function (token) {
-               return (0, _authenticationDbService.updateResetPwdTokenInUser)(token, knownUser.id).then(function (user) {
-                  return true;
-               });
-            });
+         var knownUser = null;
+         return (0, _authenticationDbService.findUserByEMail)(email).then(function (user) {
+            knownUser = user;
+            return tokenHandler.encrypt(user);
+         }).then(function (token) {
+            return (0, _authenticationDbService.updateResetPwdTokenInUser)(token, knownUser.id);
+         }).then(function (user) {
+            return (0, _sendEMailService.sendEMail)(_sendEMailService.forgotPasswordTemplate, user);
          });
       },
-      resetPassword: function resetPassword(_, _ref5) {
-         var password = _ref5.password,
-             token = _ref5.token;
+      resetPassword: function resetPassword(_, _ref6, _ref7) {
+         var password = _ref6.password,
+             confirmation = _ref6.confirmation,
+             resetPwdToken = _ref6.resetPwdToken;
+         var tokenHandler = _ref7.tokenHandler;
 
-         return true;
+         return tokenHandler.validate(resetPwdToken).then(function (token) {
+            return (0, _userDbService.findUserById)(token.userId);
+         }).then(function (knownUser) {
+            return (0, _authenticationDbService.updatePasswordAndTokenInUser)(password, confirmation, resetPwdToken, knownUser);
+         });
       }
    }
 };

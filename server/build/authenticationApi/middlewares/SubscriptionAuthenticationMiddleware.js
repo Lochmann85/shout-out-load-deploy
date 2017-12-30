@@ -34,8 +34,8 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
       _classCallCheck(this, SubscriptionAuthenticationMiddleware);
 
       var _this = _possibleConstructorReturn(this, (SubscriptionAuthenticationMiddleware.__proto__ || Object.getPrototypeOf(SubscriptionAuthenticationMiddleware)).call(this, {
-         sendResetPasswordMutation: new _jwtService.GraphQLTokenHandler(), //TODO: needs different token handler
-         resetPasswordMutation: new _jwtService.GraphQLTokenHandler(), //TODO: needs different token handler
+         forgotPasswordMutation: new _jwtService.ForgotPasswordTokenHandler(),
+         resetPasswordMutation: new _jwtService.ForgotPasswordTokenHandler(),
          signupMutation: new _jwtService.SignupTokenHandler(),
          signupConfirmationQuery: new _jwtService.SignupTokenHandler(),
          default: new _jwtService.GraphQLTokenHandler()
@@ -60,8 +60,8 @@ var SubscriptionAuthenticationMiddleware = function (_BaseAuthenticationMi) {
          operationName: "signupConfirmationQuery",
          searchString: "signupConfirmation"
       }, {
-         operationName: "sendResetPasswordMutation",
-         searchString: "sendResetPassword"
+         operationName: "forgotPasswordMutation",
+         searchString: "forgotPassword"
       }, {
          operationName: "resetPasswordMutation",
          searchString: "resetPassword"

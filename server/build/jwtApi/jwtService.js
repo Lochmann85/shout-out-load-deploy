@@ -22,4 +22,13 @@ Object.defineProperty(exports, 'SignupTokenHandler', {
   }
 });
 
+var _ForgotPasswordTokenHandler = require('./tokenTypes/ForgotPasswordTokenHandler');
+
+Object.defineProperty(exports, 'ForgotPasswordTokenHandler', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_ForgotPasswordTokenHandler).default;
+  }
+});
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }

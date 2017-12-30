@@ -74,20 +74,28 @@ var updateResetPwdTokenInUser = function updateResetPwdTokenInUser(resetPassword
  * @function updatePasswordAndTokenInUser
  * @description resets the reset password token and changes the password for user with the given id
  * @param {string} password - new password
+ * @param {string} confirmation - password confirmation
  * @param {string} resetPasswordToken - token for resetting the password
  * @param {object} user - user to update
  * @returns {Promise} of updated user
  */
-var updatePasswordAndTokenInUser = function updatePasswordAndTokenInUser(password, resetPasswordToken, user) {
+var updatePasswordAndTokenInUser = function updatePasswordAndTokenInUser(password, confirmation, resetPasswordToken, user) {
    if (user.resetPasswordToken === resetPasswordToken) {
-      var set = {
-         password: password,
-         resetPasswordToken: ""
-      };
-      return _models.userModel.findByIdAndUpdate(user.id, { $set: set }).exec().catch(_convertMongooseToReadableError2.default);
+      if (password === confirmation) {
+         var set = {
+            password: password,
+            resetPasswordToken: ""
+         };
+         return _models.userModel.findByIdAndUpdate(user.id, { $set: set }).exec().catch(_convertMongooseToReadableError2.default);
+      } else {
+         return Promise.reject(new _errorsApi.CustomError("NoConfirmation", {
+            message: "Your password is not correctly confirmed.",
+            key: "confirm"
+         }));
+      }
    } else {
       return Promise.reject(new _errorsApi.CustomError("OneTimeJwt", {
-         message: "You already changed your password from this email.",
+         message: "You already changed your password from this E-Mail.",
          key: "email"
       }));
    }
